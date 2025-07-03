@@ -71,55 +71,60 @@ export const CorporateSidebar = ({ isOpen, onToggle }: CorporateSidebarProps) =>
           
           return (
             <div key={item.name} className="relative group">
-              <div className="flex items-center">
-                {isDashboard ? (
-                  <div className="flex items-center w-full">
-                    <Button
-                      onClick={handleDashboardIconClick}
-                      variant="ghost"
-                      className={cn(
-                        "p-3 rounded-xl mr-1 transition-all duration-200",
-                        isActive 
-                          ? "bg-deep-blue text-white hover:bg-deep-blue/90" 
-                          : "hover:bg-light-bg text-deep-blue hover:text-teal"
-                      )}
-                    >
-                      <item.icon className="h-5 w-5" />
-                    </Button>
-                    {isOpen && (
-                      <button
-                        onClick={() => handleNavigation(item.href)}
-                        className={cn(
-                          "flex-1 text-left p-3 rounded-xl transition-all duration-200 font-medium",
-                          isActive 
-                            ? "bg-deep-blue text-white" 
-                            : "text-slate hover:text-deep-blue hover:bg-light-bg"
-                        )}
-                      >
-                        {item.name}
-                      </button>
-                    )}
-                  </div>
-                ) : (
+              {isDashboard ? (
+                <div 
+                  className={cn(
+                    "flex items-center w-full rounded-xl transition-all duration-200",
+                    isActive 
+                      ? "bg-deep-blue" 
+                      : "hover:bg-light-bg"
+                  )}
+                >
                   <Button
-                    onClick={() => handleNavigation(item.href)}
+                    onClick={handleDashboardIconClick}
                     variant="ghost"
                     className={cn(
-                      "w-full justify-start text-left transition-all duration-200 p-3",
+                      "p-3 rounded-xl mr-1 transition-all duration-200 hover:bg-transparent",
                       isActive 
-                        ? "bg-deep-blue text-white hover:bg-deep-blue/90" 
-                        : "text-slate hover:text-deep-blue hover:bg-light-bg"
+                        ? "text-white hover:text-white" 
+                        : "text-deep-blue hover:text-teal"
                     )}
                   >
                     <item.icon className="h-5 w-5" />
-                    {isOpen && (
-                      <span className="ml-3 font-medium">
-                        {item.name}
-                      </span>
-                    )}
                   </Button>
-                )}
-              </div>
+                  {isOpen && (
+                    <button
+                      onClick={() => handleNavigation(item.href)}
+                      className={cn(
+                        "flex-1 text-left p-3 rounded-xl transition-all duration-200 font-medium hover:bg-transparent",
+                        isActive 
+                          ? "text-white" 
+                          : "text-slate hover:text-deep-blue"
+                      )}
+                    >
+                      {item.name}
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <Button
+                  onClick={() => handleNavigation(item.href)}
+                  variant="ghost"
+                  className={cn(
+                    "w-full justify-start text-left transition-all duration-200 p-3",
+                    isActive 
+                      ? "bg-deep-blue text-white hover:bg-deep-blue/90" 
+                      : "text-slate hover:text-deep-blue hover:bg-light-bg"
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  {isOpen && (
+                    <span className="ml-3 font-medium">
+                      {item.name}
+                    </span>
+                  )}
+                </Button>
+              )}
               
               {!isOpen && (
                 <div className="absolute left-16 top-0 bg-deep-blue text-white px-3 py-2 rounded-md text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50 pointer-events-none">
