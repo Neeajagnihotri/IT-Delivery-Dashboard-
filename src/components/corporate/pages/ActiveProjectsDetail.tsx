@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -92,9 +91,8 @@ export const ActiveProjectsDetail = () => {
     navigate('/');
   };
 
-  const handleProjectClick = (projectName: string) => {
-    const encodedName = encodeURIComponent(projectName);
-    navigate(`/project/${encodedName}`);
+  const handleProjectClick = (projectId: number) => {
+    navigate(`/project-detail/${projectId}`);
   };
 
   const getHealthBadge = (health: string) => {
@@ -170,7 +168,7 @@ export const ActiveProjectsDetail = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Total Projects</p>
-                  <p className="text-3xl font-bold">{totalProjects}</p>
+                  <p className="text-3xl font-bold">{projectData.length}</p>
                 </div>
                 <FolderOpen className="h-8 w-8 opacity-80" />
               </div>
@@ -185,7 +183,7 @@ export const ActiveProjectsDetail = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Healthy Projects</p>
-                  <p className="text-3xl font-bold">{healthyProjects}</p>
+                  <p className="text-3xl font-bold">{projectData.filter(p => p.health === 'Green').length}</p>
                 </div>
                 <TrendingUp className="h-8 w-8 opacity-80" />
               </div>
@@ -200,7 +198,7 @@ export const ActiveProjectsDetail = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">At Risk</p>
-                  <p className="text-3xl font-bold">{atRiskProjects}</p>
+                  <p className="text-3xl font-bold">{projectData.filter(p => p.health === 'Yellow' || p.health === 'Red').length}</p>
                 </div>
                 <AlertTriangle className="h-8 w-8 opacity-80" />
               </div>
@@ -269,7 +267,7 @@ export const ActiveProjectsDetail = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleProjectClick(project.name)}
+                          onClick={() => handleProjectClick(project.id)}
                           className="text-deep-blue border-deep-blue hover:bg-deep-blue hover:text-white"
                         >
                           View Details

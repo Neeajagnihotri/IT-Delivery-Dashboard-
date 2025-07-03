@@ -29,16 +29,16 @@ const projectDetails: Record<string, {
 }> = {
   "1": {
     id: "1",
-    name: "E-commerce Platform Redesign",
-    client: "TechCorp Solutions",
+    name: "Project Alpha",
+    client: "TechCorp Industries",
     status: "In Progress",
     priority: "High",
-    progress: 75,
-    budget: 150000,
-    spent: 112500,
+    progress: 92,
+    budget: 450000,
+    spent: 414000,
     startDate: "2024-01-15",
-    endDate: "2024-07-30",
-    description: "Complete redesign and modernization of the existing e-commerce platform with enhanced user experience, mobile responsiveness, and performance optimization.",
+    endDate: "2024-06-30",
+    description: "Complete development and deployment of Project Alpha with enhanced user experience, mobile responsiveness, and performance optimization.",
     projectManager: "Sarah Johnson",
     teamLead: "Michael Chen",
     resources: [
@@ -62,6 +62,38 @@ const projectDetails: Record<string, {
       { name: "Database Design", status: "Completed", dueDate: "2024-03-30" },
       { name: "Documentation", status: "In Progress", dueDate: "2024-07-15" }
     ]
+  },
+  "2": {
+    id: "2",
+    name: "Beta Platform",
+    client: "InnovateCorp",
+    status: "In Progress",
+    priority: "Medium",
+    progress: 78,
+    budget: 280000,
+    spent: 218400,
+    startDate: "2024-01-01",
+    endDate: "2024-05-15",
+    description: "Development of Beta Platform with advanced analytics and user management features.",
+    projectManager: "Mike Chen",
+    teamLead: "Sarah Wilson",
+    resources: [
+      { name: "John Smith", role: "Full Stack Developer", allocation: "100%" },
+      { name: "Emma Johnson", role: "UI/UX Designer", allocation: "75%" },
+      { name: "Robert Lee", role: "DevOps Engineer", allocation: "50%" }
+    ],
+    milestones: [
+      { name: "Project Kickoff", date: "2024-01-15", status: "Completed" },
+      { name: "MVP Development", date: "2024-03-01", status: "Completed" },
+      { name: "Beta Testing", date: "2024-04-15", status: "In Progress" },
+      { name: "Production Release", date: "2024-05-15", status: "Pending" }
+    ],
+    technologies: ["Vue.js", "Python", "PostgreSQL", "Docker"],
+    deliverables: [
+      { name: "Web Application", status: "In Progress", dueDate: "2024-05-01" },
+      { name: "API Documentation", status: "Completed", dueDate: "2024-04-01" },
+      { name: "Testing Suite", status: "In Progress", dueDate: "2024-04-30" }
+    ]
   }
 };
 
@@ -75,7 +107,7 @@ export const ProjectDetailView = () => {
       <div className="min-h-screen bg-light-bg p-6">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl font-bold mb-4 text-deep-blue">Project Not Found</h1>
-          <Button onClick={() => navigate('/resource-management/projects')} className="bg-deep-blue text-white">
+          <Button onClick={() => navigate('/active-projects')} className="bg-deep-blue text-white">
             Back to Projects
           </Button>
         </div>
@@ -117,7 +149,7 @@ export const ProjectDetailView = () => {
           </div>
           <Button
             variant="outline"
-            onClick={() => navigate('/resource-management/projects')}
+            onClick={() => navigate('/active-projects')}
             className="border-slate text-deep-blue hover:bg-light-bg"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
