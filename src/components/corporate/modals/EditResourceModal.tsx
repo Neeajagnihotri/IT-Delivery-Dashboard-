@@ -1,13 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { User, Building, Mail, Phone, MapPin, Briefcase, Calendar, DollarSign } from "lucide-react";
+import { User } from "lucide-react";
 
 interface EditResourceModalProps {
   isOpen: boolean;
@@ -23,21 +22,42 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
   onSave
 }) => {
   const [formData, setFormData] = useState({
-    name: resource?.name || '',
-    role: resource?.role || '',
-    department: resource?.department || '',
-    location: resource?.location || '',
-    experience: resource?.experience || '',
-    status: resource?.status || '',
-    email: resource?.email || `${resource?.name?.toLowerCase().replace(' ', '.')}@zapcom.com` || '',
-    phone: resource?.phone || '+1 (555) 123-4567',
-    salary: resource?.salary || '',
-    skills: resource?.skills?.join(', ') || 'React, TypeScript, Node.js, AWS',
-    joinDate: resource?.joinDate || '2023-01-15',
-    projects: resource?.projects || 0
+    name: '',
+    role: '',
+    department: '',
+    location: '',
+    experience: '',
+    status: '',
+    email: '',
+    phone: '',
+    salary: '',
+    skills: '',
+    joinDate: '',
+    projects: 0
   });
 
+  useEffect(() => {
+    if (resource) {
+      console.log('Setting form data for resource:', resource);
+      setFormData({
+        name: resource.name || '',
+        role: resource.role || '',
+        department: resource.department || '',
+        location: resource.location || '',
+        experience: resource.experience || '',
+        status: resource.status || '',
+        email: resource.email || `${resource.name?.toLowerCase().replace(' ', '.')}@zapcom.com` || '',
+        phone: resource.phone || '+1 (555) 123-4567',
+        salary: resource.salary || '',
+        skills: Array.isArray(resource.skills) ? resource.skills.join(', ') : (resource.skills || 'React, TypeScript, Node.js, AWS'),
+        joinDate: resource.joinDate || '2023-01-15',
+        projects: resource.projects || 0
+      });
+    }
+  }, [resource, isOpen]);
+
   const handleInputChange = (field: string, value: string | number) => {
+    console.log(`Updating field ${field} with value:`, value);
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -45,19 +65,30 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
   };
 
   const handleSave = () => {
+    console.log('Saving form data:', formData);
+    
     const updatedResource = {
       ...resource,
       ...formData,
-      skills: formData.skills.split(',').map(skill => skill.trim())
+      skills: formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0)
     };
+    
+    console.log('Updated resource being saved:', updatedResource);
     onSave(updatedResource);
+  };
+
+  const handleClose = () => {
+    console.log('Closing edit modal');
     onClose();
   };
 
-  if (!resource) return null;
+  if (!resource) {
+    console.log('No resource provided to EditResourceModal');
+    return null;
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-white border-slate/30">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold flex items-center gap-3 text-deep-blue">
@@ -216,7 +247,7 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
         </div>
         
         <DialogFooter className="flex gap-3 pt-4 border-t border-slate/30">
-          <Button variant="outline" onClick={onClose} className="border-slate text-deep-blue hover:bg-light-bg">
+          <Button variant="outline" onClick={handleClose} className="border-slate text-deep-blue hover:bg-light-bg">
             Cancel
           </Button>
           <Button onClick={handleSave} className="bg-deep-blue hover:bg-deep-blue/90 text-white">

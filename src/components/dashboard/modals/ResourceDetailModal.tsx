@@ -20,19 +20,24 @@ import {
   Edit
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EditResourceModal } from "../../corporate/modals/EditResourceModal";
 
 interface ResourceDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   resource: any;
+  onResourceUpdate?: (updatedResource: any) => void;
 }
 
-export const ResourceDetailModal = ({ open, onOpenChange, resource }: ResourceDetailModalProps) => {
+export const ResourceDetailModal = ({ open, onOpenChange, resource, onResourceUpdate }: ResourceDetailModalProps) => {
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
   const [currentResource, setCurrentResource] = useState(resource);
+  
+  useEffect(() => {
+    setCurrentResource(resource);
+  }, [resource]);
   
   if (!currentResource) return null;
 
@@ -56,12 +61,25 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource }: ResourceDe
   };
 
   const handleEditResource = () => {
+    console.log('Opening edit modal for resource:', currentResource);
     setShowEditModal(true);
   };
 
   const handleSaveResource = (updatedResource: any) => {
+    console.log('Saving updated resource:', updatedResource);
     setCurrentResource(updatedResource);
-    console.log('Resource updated:', updatedResource);
+    
+    // Call the callback to update parent component if provided
+    if (onResourceUpdate) {
+      onResourceUpdate(updatedResource);
+    }
+    
+    setShowEditModal(false);
+  };
+
+  const handleCloseEditModal = () => {
+    console.log('Closing edit modal');
+    setShowEditModal(false);
   };
 
   return (
@@ -148,7 +166,7 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource }: ResourceDe
                   </div>
                   <div className="flex items-center gap-3">
                     <Calendar className="h-4 w-4 text-slate" />
-                    <span className="text-deep-blue">Joined: Jan 15, 2023</span>
+                    <span className="text-deep-blue">Joined: {currentResource.joinDate || 'Jan 15, 2023'}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -258,7 +276,7 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource }: ResourceDe
               </Button>
               <Button onClick={handleEditResource} variant="outline" className="border-teal text-teal hover:bg-teal/5">
                 <Edit className="h-4 w-4 mr-2" />
-                Edit
+                Edit Profile
               </Button>
               <Button onClick={handleViewFullProfile} className="bg-deep-blue hover:bg-deep-blue/90 text-white">
                 View Full Profile
@@ -268,12 +286,14 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource }: ResourceDe
         </DialogContent>
       </Dialog>
 
-      <EditResourceModal
-        isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        resource={currentResource}
-        onSave={handleSaveResource}
-      />
+      {showEditModal && (
+        <EditResourceModal
+          isOpen={showEditModal}
+          onClose={handleCloseEditModal}
+          resource={currentResource}
+          onSave={handleSaveResource}
+        />
+      )}
     </>
   );
 };
