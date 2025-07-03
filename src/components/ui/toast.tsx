@@ -30,8 +30,8 @@ const toastVariants = cva(
       variant: {
         default: "border bg-background text-foreground",
         destructive: "border-transparent bg-[#E21A1B] text-white",
-        success: "border-transparent bg-[#4ACA17] text-white",
-        warning: "border-transparent bg-[#F9CC17] text-black",
+        success: "border-transparent text-white",
+        warning: "border-transparent text-white",
       },
     },
     defaultVariants: {
@@ -45,13 +45,25 @@ const Toast = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
+  const getBackgroundColor = () => {
+    switch (variant) {
+      case 'success':
+        return { backgroundColor: '#4ACA17' };
+      case 'warning':
+        return { backgroundColor: '#F9CC17' };
+      default:
+        return {};
+    }
+  };
+
   return (
     <ToastPrimitives.Root
       ref={ref}
       className={cn(toastVariants({ variant }), className)}
+      style={getBackgroundColor()}
       {...props}
     />
-  )
+  );
 })
 Toast.displayName = ToastPrimitives.Root.displayName
 
@@ -77,7 +89,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 opacity-0 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 text-white/70 hover:text-white group-[.warning]:text-black/70 group-[.warning]:hover:text-black group-[.success]:text-white/70 group-[.success]:hover:text-white group-[.destructive]:text-white/70 group-[.destructive]:hover:text-white",
+      "absolute right-2 top-2 rounded-md p-1 opacity-0 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 text-white/70 hover:text-white group-[.warning]:text-white/70 group-[.warning]:hover:text-white group-[.success]:text-white/70 group-[.success]:hover:text-white group-[.destructive]:text-white/70 group-[.destructive]:hover:text-white",
       className
     )}
     toast-close=""
