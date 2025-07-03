@@ -31,35 +31,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     // Demo credentials for different roles
-    if (email === "hr@zapcom.com" && password === "hr123") {
+    if (email === "hr@zapcg.com" && password === "hr123") {
       setUser({
         id: "1",
         name: "Sarah Johnson",
-        email: "hr@zapcom.com",
+        email: "hr@zapcg.com",
         role: "hr"
       });
       return true;
-    } else if (email === "manager@zapcom.com" && password === "manager123") {
+    } else if (email === "manager@zapcg.com" && password === "manager123") {
       setUser({
         id: "2",
         name: "Michael Chen",
-        email: "manager@zapcom.com",
+        email: "manager@zapcg.com",
         role: "resource_manager"
       });
       return true;
-    } else if (email === "leadership@zapcom.com" && password === "leadership123") {
+    } else if (email === "leadership@zapcg.com" && password === "leadership123") {
       setUser({
         id: "3",
         name: "David Kumar",
-        email: "leadership@zapcom.com",
+        email: "leadership@zapcg.com",
         role: "leadership"
       });
       return true;
-    } else if (email === "pm@zapcom.com" && password === "pm123") {
+    } else if (email === "pm@zapcg.com" && password === "pm123") {
       setUser({
         id: "4",
         name: "Alex Rodriguez",
-        email: "pm@zapcom.com",
+        email: "pm@zapcg.com",
         role: "delivery_owner"
       });
       return true;
