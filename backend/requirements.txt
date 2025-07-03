@@ -1,0 +1,75 @@
+
+# Flask and Core Dependencies
+Flask==3.0.0
+Flask-CORS==4.0.0
+Flask-JWT-Extended==4.6.0
+
+# Database
+psycopg2-binary==2.9.9
+SQLAlchemy==2.0.23
+Flask-SQLAlchemy==3.1.1
+
+# Security
+bcrypt==4.1.2
+cryptography==41.0.8
+
+# Environment and Configuration
+python-dotenv==1.0.0
+
+# Date and Time
+python-dateutil==2.8.2
+
+# HTTP and Requests
+requests==2.31.0
+urllib3==2.1.0
+
+# Data Serialization
+marshmallow==3.20.2
+Flask-Marshmallow==0.15.0
+
+# Validation
+cerberus==1.3.5
+
+# Development and Testing
+pytest==7.4.4
+pytest-flask==1.3.0
+pytest-cov==4.1.0
+
+# API Documentation
+flasgger==0.9.7.1
+
+# Monitoring and Logging
+flask-monitor==0.1.0
+
+# Performance
+gunicorn==21.2.0
+gevent==23.9.1
+
+# Cache (Optional)
+Flask-Caching==2.1.0
+redis==5.0.1
+
+# Rate Limiting
+Flask-Limiter==3.5.0
+
+# Email (Optional)
+Flask-Mail==0.9.1
+
+# Task Queue (Optional)
+celery==5.3.4
+
+# Excel Export (Optional)
+openpyxl==3.1.2
+pandas==2.1.4
+
+# Timezone Support
+pytz==2023.3
+
+# File Upload Security
+Werkzeug==3.0.1
+
+# JSON Web Tokens
+PyJWT==2.8.0
+
+# UUID Generation
+uuid==1.30
