@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 
-export type UserRole = "hr" | "resource_manager" | "leadership";
+export type UserRole = "hr" | "resource_manager" | "leadership" | "delivery_owner";
 
 export interface User {
   id: string;
@@ -53,6 +53,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         name: "David Kumar",
         email: "leadership@zapcom.com",
         role: "leadership"
+      });
+      return true;
+    } else if (email === "pm@zapcom.com" && password === "pm123") {
+      setUser({
+        id: "4",
+        name: "Alex Rodriguez",
+        email: "pm@zapcom.com",
+        role: "delivery_owner"
       });
       return true;
     }

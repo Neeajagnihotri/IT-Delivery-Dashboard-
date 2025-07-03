@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/auth/AuthContext';
@@ -143,8 +142,8 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return resources;
     }
     
-    // Resource managers see resources but not sensitive data
-    if (user.role === 'resource_manager') {
+    // Resource managers and delivery owners see resources but not sensitive data
+    if (user.role === 'resource_manager' || user.role === 'delivery_owner') {
       return resources.map(resource => ({
         ...resource,
         // Note: For future expansion, sensitive fields would be filtered here
@@ -159,16 +158,16 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     
     // All authenticated users can see basic project data
     // but financial details might be restricted
-    if (user.role === 'leadership' || user.role === 'hr' || user.role === 'resource_manager') {
-      return projects;
+    if (user.role === 'leadership' || user.role === 'hr' || user.role === 'resource_manager' || user.role === 'delivery_owner') {
+      return projects.map(project => ({
+        ...project,
+        // Remove financial data for non-authorized roles
+        budget: user.role === 'leadership' || user.role === 'hr' ? project.budget : 0,
+        spent: user.role === 'leadership' || user.role === 'hr' ? project.spent : 0,
+      }));
     }
     
-    return projects.map(project => ({
-      ...project,
-      // Remove financial data for non-authorized roles
-      budget: user.role === 'leadership' || user.role === 'hr' ? project.budget : 0,
-      spent: user.role === 'leadership' || user.role === 'hr' ? project.spent : 0,
-    }));
+    return [];
   }, [projects, user]);
 
   // Calculate KPIs based on current data
@@ -292,7 +291,7 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return;
     }
 
-    // HR can edit everything, resource managers can edit basic data
+    // HR can edit everything, resource managers can edit basic data, delivery owners cannot edit
     const canEdit = user.role === 'hr' || user.role === 'resource_manager';
 
     if (!canEdit) {

@@ -90,6 +90,35 @@ const rolePermissions: Record<UserRole, RBACPermissions> = {
     canAccessSettings: false,
   },
   
+  delivery_owner: {
+    // Delivery Owner can view resources but not edit them
+    canViewResources: true,
+    canEditResources: false,
+    canAddResources: false,
+    canViewSalaryDetails: false,
+    canEditSalaryDetails: false,
+    canViewPersonalInfo: true,
+    canEditPersonalInfo: false,
+    
+    // Can view and manage project milestones and status
+    canViewProjects: true,
+    canEditProjects: false, // Cannot edit project details
+    canAddProjects: false,
+    canAllocateResources: false,
+    canViewProjectMilestones: true,
+    canEditProjectMilestones: true, // Can update milestone status
+    
+    // Dashboard access
+    canViewDashboard: true,
+    canViewFinancialData: false,
+    canViewAnalytics: true,
+    canViewReports: true,
+    
+    // Administrative
+    canAccessHRModule: false,
+    canAccessSettings: false,
+  },
+  
   leadership: {
     // Leadership has view-only access to everything
     canViewResources: true,
