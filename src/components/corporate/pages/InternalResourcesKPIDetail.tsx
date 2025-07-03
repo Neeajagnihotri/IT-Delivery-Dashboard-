@@ -48,10 +48,6 @@ export const InternalResourcesKPIDetail = () => {
     setShowExportModal(true);
   };
 
-  const handleViewProfile = (resourceId: number) => {
-    navigate(`/resource-detail/${resourceId}`);
-  };
-
   return (
     <div className="min-h-screen bg-light-bg p-6">
       <div className="max-w-7xl mx-auto">
@@ -239,20 +235,10 @@ export const InternalResourcesKPIDetail = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="border-deep-blue text-deep-blue hover:bg-deep-blue/5"
-                            onClick={() => handleViewProfile(resource.id)}
-                          >
+                          <Button variant="outline" size="sm" className="border-deep-blue text-deep-blue hover:bg-deep-blue/5">
                             View Profile
                           </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="border-teal text-teal hover:bg-teal/5"
-                            onClick={() => handleViewProfile(resource.id)}
-                          >
+                          <Button variant="outline" size="sm" className="border-teal text-teal hover:bg-teal/5">
                             Edit
                           </Button>
                         </div>

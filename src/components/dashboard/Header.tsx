@@ -113,10 +113,6 @@ export const Header = () => {
     );
   };
 
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
-
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
@@ -227,10 +223,7 @@ export const Header = () => {
                             className={`p-4 border-b border-soft-silver last:border-b-0 cursor-pointer hover:bg-light-bg transition-colors duration-300 ${
                               !notification.read ? 'bg-light-bg' : ''
                             }`}
-                            onClick={() => {
-                              markAsRead(notification.id);
-                              removeNotification(notification.id);
-                            }}
+                            onClick={() => markAsRead(notification.id)}
                           >
                             <div className="flex items-start space-x-3">
                               <div className="mt-1">
