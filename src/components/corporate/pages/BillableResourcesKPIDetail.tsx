@@ -1,13 +1,14 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UserCheck, ArrowLeft, DollarSign, TrendingUp, Calendar, Search, Filter, Download } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { BillableResourcesExportModal } from "../modals/BillableResourcesExportModal";
 
 const billableData = [
   { name: 'Client Projects', count: 160, percentage: 84.7, color: '#22356F' },
@@ -35,12 +36,18 @@ const billableResources = [
 export const BillableResourcesKPIDetail = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedClient, setSelectedClient] = useState<string>("");
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  const filteredResources = billableResources.filter(resource =>
-    resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.client.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const uniqueClients = Array.from(new Set(billableResources.map(resource => resource.client)));
+
+  const filteredResources = billableResources.filter(resource => {
+    const matchesSearch = resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.client.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesClient = selectedClient === "" || resource.client === selectedClient;
+    return matchesSearch && matchesClient;
+  });
 
   const totalRevenue = billableResources.reduce((sum, resource) => sum + resource.revenue, 0);
   const avgUtilization = Math.round(billableResources.reduce((sum, resource) => sum + resource.utilization, 0) / billableResources.length);
@@ -173,11 +180,22 @@ export const BillableResourcesKPIDetail = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="border-slate text-slate hover:bg-slate/5">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter by Client
-                </Button>
-                <Button className="bg-teal hover:bg-teal/90 text-white">
+                <Select value={selectedClient} onValueChange={setSelectedClient}>
+                  <SelectTrigger className="w-48 border-slate text-slate">
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Filter by Client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Clients</SelectItem>
+                    {uniqueClients.map(client => (
+                      <SelectItem key={client} value={client}>{client}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button 
+                  className="bg-teal hover:bg-teal/90 text-white"
+                  onClick={() => setIsExportModalOpen(true)}
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export Revenue Report
                 </Button>
@@ -261,6 +279,11 @@ export const BillableResourcesKPIDetail = () => {
           </CardContent>
         </Card>
       </div>
+
+      <BillableResourcesExportModal 
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+      />
     </div>
   );
 };

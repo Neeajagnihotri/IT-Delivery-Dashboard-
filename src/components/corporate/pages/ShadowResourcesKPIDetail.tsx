@@ -1,13 +1,14 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Eye, ArrowLeft, Clock, Users, Search, Filter, Download } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ShadowResourcesExportModal } from "../modals/ShadowResourcesExportModal";
 
 const shadowData = [
   { name: 'Learning Phase', count: 12, color: '#22356F' },
@@ -26,12 +27,18 @@ const shadowResources = [
 export const ShadowResourcesKPIDetail = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedPhase, setSelectedPhase] = useState<string>("");
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  const filteredResources = shadowResources.filter(resource =>
-    resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.mentor.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const uniquePhases = Array.from(new Set(shadowResources.map(resource => resource.status)));
+
+  const filteredResources = shadowResources.filter(resource => {
+    const matchesSearch = resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.mentor.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesPhase = selectedPhase === "" || resource.status === selectedPhase;
+    return matchesSearch && matchesPhase;
+  });
 
   const avgProgress = Math.round(shadowResources.reduce((sum, resource) => sum + resource.progress, 0) / shadowResources.length);
 
@@ -165,11 +172,22 @@ export const ShadowResourcesKPIDetail = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="border-slate text-slate hover:bg-slate/5">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter by Phase
-                </Button>
-                <Button className="bg-teal hover:bg-teal/90 text-white">
+                <Select value={selectedPhase} onValueChange={setSelectedPhase}>
+                  <SelectTrigger className="w-48 border-slate text-slate">
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Filter by Phase" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Phases</SelectItem>
+                    {uniquePhases.map(phase => (
+                      <SelectItem key={phase} value={phase}>{phase}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button 
+                  className="bg-teal hover:bg-teal/90 text-white"
+                  onClick={() => setIsExportModalOpen(true)}
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export Progress Report
                 </Button>
@@ -255,6 +273,11 @@ export const ShadowResourcesKPIDetail = () => {
           </CardContent>
         </Card>
       </div>
+
+      <ShadowResourcesExportModal 
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+      />
     </div>
   );
 };
