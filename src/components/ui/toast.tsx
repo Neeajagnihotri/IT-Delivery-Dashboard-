@@ -30,8 +30,8 @@ const toastVariants = cva(
       variant: {
         default: "border bg-background text-foreground",
         destructive: "border-transparent bg-[#E21A1B] text-white",
-        success: "border-transparent text-white",
-        warning: "border-transparent text-white",
+        success: "border-transparent bg-[#4ACA17] text-white",
+        warning: "border-transparent bg-[#F9CC17] text-white",
       },
     },
     defaultVariants: {
@@ -45,22 +45,10 @@ const Toast = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
-  const getBackgroundColor = () => {
-    switch (variant) {
-      case 'success':
-        return { backgroundColor: '#4ACA17' };
-      case 'warning':
-        return { backgroundColor: '#F9CC17' };
-      default:
-        return {};
-    }
-  };
-
   return (
     <ToastPrimitives.Root
       ref={ref}
       className={cn(toastVariants({ variant }), className)}
-      style={getBackgroundColor()}
       {...props}
     />
   );
