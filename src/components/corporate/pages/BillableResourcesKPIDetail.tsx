@@ -25,11 +25,11 @@ const revenueData = [
 ];
 
 const billableResources = [
-  { id: 1, name: 'Alex Rodriguez', role: 'Full Stack Developer', client: 'TechCorp Industries', billableRate: 85, hours: 160, revenue: 13600, utilization: 95 },
-  { id: 2, name: 'Emily Davis', role: 'Senior Designer', client: 'InnovateCorp', billableRate: 70, hours: 150, revenue: 10500, utilization: 88 },
-  { id: 3, name: 'Tom Wilson', role: 'QA Engineer', client: 'GlobalTech', billableRate: 60, hours: 155, revenue: 9300, utilization: 91 },
-  { id: 4, name: 'Anna Smith', role: 'Lead Developer', client: 'MegaCorp', billableRate: 95, hours: 165, revenue: 15675, utilization: 97 },
-  { id: 5, name: 'James Brown', role: 'Technical Lead', client: 'RetailTech', billableRate: 110, hours: 170, revenue: 18700, utilization: 100 }
+  { id: 1, name: 'Rajesh Kumar', role: 'Senior Developer', client: 'TechCorp Industries', billableRate: 85, hours: 160, revenue: 13600, utilization: 95 },
+  { id: 2, name: 'Priya Sharma', role: 'QA Lead', client: 'FinanceHub', billableRate: 70, hours: 150, revenue: 10500, utilization: 88 },
+  { id: 3, name: 'Kavitha Reddy', role: 'Backend Developer', client: 'DataCore', billableRate: 60, hours: 155, revenue: 9300, utilization: 91 },
+  { id: 4, name: 'Sanjay Patel', role: 'Frontend Developer', client: 'RetailTech', billableRate: 95, hours: 165, revenue: 15675, utilization: 97 },
+  { id: 5, name: 'John Smith', role: 'Architect', client: 'CorporateTech', billableRate: 110, hours: 170, revenue: 18700, utilization: 100 }
 ];
 
 export const BillableResourcesKPIDetail = () => {
@@ -44,6 +44,15 @@ export const BillableResourcesKPIDetail = () => {
 
   const totalRevenue = billableResources.reduce((sum, resource) => sum + resource.revenue, 0);
   const avgUtilization = Math.round(billableResources.reduce((sum, resource) => sum + resource.utilization, 0) / billableResources.length);
+
+  const handleViewDetails = (resourceId: number) => {
+    navigate(`/resource-detail/${resourceId}`);
+  };
+
+  const handleReallocate = (resourceId: number) => {
+    // Navigate to project allocation page with the resource pre-selected
+    navigate(`/resource-management/project-allocation?resourceId=${resourceId}`);
+  };
 
   return (
     <div className="min-h-screen bg-light-bg p-6">
@@ -226,10 +235,20 @@ export const BillableResourcesKPIDetail = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm" className="border-deep-blue text-deep-blue hover:bg-deep-blue/5">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="border-deep-blue text-deep-blue hover:bg-deep-blue/5"
+                            onClick={() => handleViewDetails(resource.id)}
+                          >
                             Details
                           </Button>
-                          <Button variant="outline" size="sm" className="border-teal text-teal hover:bg-teal/5">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="border-teal text-teal hover:bg-teal/5"
+                            onClick={() => handleReallocate(resource.id)}
+                          >
                             Reallocate
                           </Button>
                         </div>

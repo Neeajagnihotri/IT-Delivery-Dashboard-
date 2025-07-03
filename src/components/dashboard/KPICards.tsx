@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, UserCheck, UserX, Eye, GraduationCap, FolderOpen, TrendingUp, TrendingDown } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const kpiData = [
   {
@@ -65,6 +66,31 @@ interface KPICardsProps {
 }
 
 export const KPICards = ({ onKPIClick }: KPICardsProps) => {
+  const navigate = useNavigate();
+
+  const handleKPIClick = (kpiType: string) => {
+    // Direct navigation for specific KPI types
+    switch (kpiType) {
+      case 'billable':
+        navigate('/resource-kpi/billable-resources');
+        break;
+      case 'total_resources':
+        navigate('/resource-kpi/total-resources');
+        break;
+      case 'benched':
+        navigate('/resource-kpi/benched-resources');
+        break;
+      case 'shadow':
+        navigate('/resource-kpi/shadow-resources');
+        break;
+      case 'associates':
+        navigate('/resource-kpi/internal-resources');
+        break;
+      default:
+        onKPIClick(kpiType);
+    }
+  };
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6 mb-6 lg:mb-8">
       {kpiData.map((kpi, index) => (
@@ -75,7 +101,7 @@ export const KPICards = ({ onKPIClick }: KPICardsProps) => {
           transition={{ delay: index * 0.1 }}
           whileHover={{ scale: 1.02, y: -5 }}
           className="cursor-pointer"
-          onClick={() => onKPIClick(kpi.type)}
+          onClick={() => handleKPIClick(kpi.type)}
         >
           <Card className="bg-white rounded-xl lg:rounded-2xl shadow-lg border border-deep-blue/20 hover:shadow-xl transition-all duration-300 h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 sm:p-4 lg:p-5">

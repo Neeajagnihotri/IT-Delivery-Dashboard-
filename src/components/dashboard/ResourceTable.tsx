@@ -7,11 +7,11 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 const mockResources = [
-  { id: 1, name: "John Smith", role: "Senior Developer", department: "Engineering", status: "billable", location: "New York", experience: "5+ years", skills: ["React", "Node.js", "TypeScript"] },
-  { id: 2, name: "Jane Doe", role: "UX Designer", department: "Design", status: "billable", location: "Remote", experience: "3+ years", skills: ["Figma", "React", "User Research"] },
-  { id: 3, name: "Mike Johnson", role: "DevOps Engineer", department: "Engineering", status: "benched", location: "San Francisco", experience: "4+ years", skills: ["AWS", "Docker", "Kubernetes"] },
-  { id: 4, name: "Sarah Wilson", role: "Frontend Developer", department: "Engineering", status: "shadow", location: "Austin", experience: "2+ years", skills: ["React", "TypeScript", "CSS"] },
-  { id: 5, name: "David Brown", role: "Backend Developer", department: "Engineering", status: "billable", location: "Seattle", experience: "6+ years", skills: ["Python", "PostgreSQL", "Django"] }
+  { id: 1, name: "Rajesh Kumar", role: "Senior Developer", department: "Engineering", status: "billable", location: "Bangalore", experience: "5+ years", skills: ["React", "Node.js", "TypeScript"] },
+  { id: 2, name: "Priya Sharma", role: "QA Lead", department: "Quality Assurance", status: "billable", location: "Hyderabad", experience: "4+ years", skills: ["Selenium", "TestNG", "API Testing"] },
+  { id: 3, name: "Amit Singh", role: "DevOps Engineer", department: "Engineering", status: "benched", location: "Bangalore", experience: "3+ years", skills: ["AWS", "Docker", "Kubernetes"] },
+  { id: 4, name: "Sanjay Patel", role: "Frontend Developer", department: "Engineering", status: "shadow", location: "Bangalore", experience: "2+ years", skills: ["React", "TypeScript", "CSS"] },
+  { id: 5, name: "Kavitha Reddy", role: "Backend Developer", department: "Engineering", status: "billable", location: "Hyderabad", experience: "4+ years", skills: ["Python", "PostgreSQL", "Django"] }
 ];
 
 const getStatusColor = (status: string) => {
@@ -34,6 +34,10 @@ export const ResourceTable = ({ onResourceClick }: ResourceTableProps) => {
   const handleViewDetails = (resource: any, e: React.MouseEvent) => {
     e.stopPropagation();
     navigate(`/resource-detail/${resource.id}`);
+  };
+
+  const handleViewAllResources = () => {
+    navigate('/resource-management');
   };
 
   return (
@@ -123,7 +127,10 @@ export const ResourceTable = ({ onResourceClick }: ResourceTableProps) => {
         </div>
         
         <div className="mt-6 text-center">
-          <Button className="w-full modern-button text-white font-semibold">
+          <Button 
+            onClick={handleViewAllResources}
+            className="w-full modern-button text-white font-semibold"
+          >
             View All Resources
           </Button>
         </div>
