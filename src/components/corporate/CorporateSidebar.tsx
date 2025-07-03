@@ -7,6 +7,7 @@ import {
   Users
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useRBAC } from "@/hooks/useRBAC";
 
 interface CorporateSidebarProps {
   isOpen: boolean;
@@ -18,33 +19,40 @@ interface NavigationItem {
   name: string;
   href: string;
   icon: any;
-  roles: string[];
+  requiredPermissions: string[];
 }
 
 export const CorporateSidebar = ({ isOpen, onToggle }: CorporateSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { hasAnyPermission, permissions } = useRBAC();
 
   const navigationItems: NavigationItem[] = [
     {
       name: "Dashboard",
       href: "/",
       icon: LayoutDashboard,
-      roles: ["hr", "resource_manager", "leadership"]
+      requiredPermissions: ["canViewDashboard"]
     },
     {
       name: "Resource Management",
       href: "/resource-management",
       icon: Users,
-      roles: ["hr", "resource_manager", "leadership"]
+      requiredPermissions: ["canViewResources", "canViewProjects"]
     },
     {
       name: "Settings",
       href: "/settings",
       icon: Settings,
-      roles: ["hr", "resource_manager", "leadership"]
+      requiredPermissions: ["canAccessSettings"]
     }
   ];
+
+  // Filter navigation items based on user permissions
+  const filteredNavigationItems = navigationItems.filter(item => {
+    if (item.requiredPermissions.length === 0) return true;
+    return hasAnyPermission(item.requiredPermissions as any);
+  });
 
   const handleNavigation = (href: string) => {
     navigate(href);
@@ -64,7 +72,7 @@ export const CorporateSidebar = ({ isOpen, onToggle }: CorporateSidebarProps) =>
       )}
     >
       <nav className="px-2 space-y-2 pt-24">
-        {navigationItems.map((item) => {
+        {filteredNavigationItems.map((item) => {
           const isActive = location.pathname === item.href || 
             (item.href === "/resource-management" && location.pathname.startsWith("/resource-management"));
           const isDashboard = item.name === "Dashboard";

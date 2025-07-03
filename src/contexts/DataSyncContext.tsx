@@ -1,6 +1,6 @@
-
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/components/auth/AuthContext';
 
 // Types for our data structures
 export interface Project {
@@ -131,6 +131,50 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
 
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Role-based data filtering
+  const getFilteredResources = useCallback(() => {
+    if (!user) return [];
+    
+    // HR and Leadership can see all resource data
+    if (user.role === 'hr' || user.role === 'leadership') {
+      return resources;
+    }
+    
+    // Resource managers see resources but not sensitive salary data
+    if (user.role === 'resource_manager') {
+      return resources.map(resource => ({
+        ...resource,
+        // Remove or mask sensitive data that only HR should see
+        salaryDetails: undefined,
+        personalInfo: {
+          ...resource.personalInfo,
+          emergencyContact: undefined,
+          bankDetails: undefined,
+        }
+      }));
+    }
+    
+    return resources;
+  }, [resources, user]);
+
+  const getFilteredProjects = useCallback(() => {
+    if (!user) return [];
+    
+    // All authenticated users can see basic project data
+    // but financial details might be restricted
+    if (user.role === 'leadership' || user.role === 'hr' || user.role === 'resource_manager') {
+      return projects;
+    }
+    
+    return projects.map(project => ({
+      ...project,
+      // Remove financial data for non-authorized roles
+      budget: user.role === 'leadership' || user.role === 'hr' ? project.budget : 0,
+      spent: user.role === 'leadership' || user.role === 'hr' ? project.spent : 0,
+    }));
+  }, [projects, user]);
 
   // Calculate KPIs based on current data
   const calculateKPIs = useCallback((projectsData: Project[], resourcesData: Resource[]) => {
@@ -172,6 +216,16 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [projects, resources, calculateKPIs]);
 
   const updateProject = useCallback((projectId: string, updates: Partial<Project>) => {
+    // Check if user has permission to edit projects
+    if (!user || (user.role !== 'resource_manager' && user.role !== 'hr')) {
+      toast({
+        title: "Access Denied",
+        description: "You don't have permission to edit projects.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setProjects(prev => prev.map(project => 
       project.id === projectId ? { ...project, ...updates } : project
     ));
@@ -180,9 +234,19 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       title: "Project Updated",
       description: "Changes have been synchronized across all dashboard views.",
     });
-  }, [toast]);
+  }, [toast, user]);
 
   const addProject = useCallback((project: Omit<Project, 'id'>) => {
+    // Check if user has permission to add projects
+    if (!user || (user.role !== 'resource_manager' && user.role !== 'hr')) {
+      toast({
+        title: "Access Denied",
+        description: "You don't have permission to add projects.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const newProject: Project = {
       ...project,
       id: Date.now().toString()
@@ -194,9 +258,19 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       title: "Project Added",
       description: "New project has been synchronized across all dashboard views.",
     });
-  }, [toast]);
+  }, [toast, user]);
 
   const deleteProject = useCallback((projectId: string) => {
+    // Only resource managers and HR can delete projects
+    if (!user || (user.role !== 'resource_manager' && user.role !== 'hr')) {
+      toast({
+        title: "Access Denied",
+        description: "You don't have permission to delete projects.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setProjects(prev => prev.filter(project => project.id !== projectId));
     
     // Also update resources that were assigned to this project
@@ -210,9 +284,32 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       title: "Project Deleted",
       description: "Project and resource allocations have been updated across all views.",
     });
-  }, [toast]);
+  }, [toast, user]);
 
   const updateResource = useCallback((resourceId: string, updates: Partial<Resource>) => {
+    // Check permissions based on what's being updated
+    if (!user) {
+      toast({
+        title: "Access Denied",
+        description: "You must be logged in to make changes.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // HR can edit everything, resource managers can edit non-sensitive data
+    const canEdit = user.role === 'hr' || 
+                   (user.role === 'resource_manager' && !updates.salaryDetails);
+
+    if (!canEdit) {
+      toast({
+        title: "Access Denied",
+        description: "You don't have permission to edit this resource information.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setResources(prev => prev.map(resource => 
       resource.id === resourceId ? { ...resource, ...updates } : resource
     ));
@@ -221,9 +318,19 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       title: "Resource Updated",
       description: "Changes have been synchronized across all dashboard views.",
     });
-  }, [toast]);
+  }, [toast, user]);
 
   const addResource = useCallback((resource: Omit<Resource, 'id'>) => {
+    // HR and resource managers can add resources
+    if (!user || (user.role !== 'hr' && user.role !== 'resource_manager')) {
+      toast({
+        title: "Access Denied",
+        description: "You don't have permission to add resources.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const newResource: Resource = {
       ...resource,
       id: Date.now().toString()
@@ -235,16 +342,26 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       title: "Resource Added",
       description: "New resource has been synchronized across all dashboard views.",
     });
-  }, [toast]);
+  }, [toast, user]);
 
   const deleteResource = useCallback((resourceId: string) => {
+    // Only HR can delete resources
+    if (!user || user.role !== 'hr') {
+      toast({
+        title: "Access Denied",
+        description: "You don't have permission to delete resources.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setResources(prev => prev.filter(resource => resource.id !== resourceId));
     
     toast({
       title: "Resource Deleted",
       description: "Resource has been removed from all dashboard views.",
     });
-  }, [toast]);
+  }, [toast, user]);
 
   const refreshData = useCallback(() => {
     // In a real app, this would fetch from an API
@@ -264,8 +381,8 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [resources]);
 
   const value: DataSyncContextType = {
-    projects,
-    resources,
+    projects: getFilteredProjects(),
+    resources: getFilteredResources(),
     kpiData,
     updateProject,
     addProject,
