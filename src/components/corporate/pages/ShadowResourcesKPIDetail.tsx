@@ -35,6 +35,17 @@ export const ShadowResourcesKPIDetail = () => {
 
   const avgProgress = Math.round(shadowResources.reduce((sum, resource) => sum + resource.progress, 0) / shadowResources.length);
 
+  const handleViewDetails = (resourceId: number) => {
+    console.log('Navigating to resource detail:', resourceId);
+    navigate(`/resource-detail/${resourceId}`);
+  };
+
+  const handleUpdateProgress = (resourceId: number) => {
+    console.log('Opening progress update for resource:', resourceId);
+    // For now, we'll show an alert - this could be replaced with a modal later
+    alert(`Update progress for resource ID: ${resourceId}. This functionality will open a progress update modal.`);
+  };
+
   return (
     <div className="min-h-screen bg-light-bg p-6">
       <div className="max-w-7xl mx-auto">
@@ -218,10 +229,20 @@ export const ShadowResourcesKPIDetail = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm" className="border-deep-blue text-deep-blue hover:bg-deep-blue/5">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="border-deep-blue text-deep-blue hover:bg-deep-blue/5"
+                            onClick={() => handleViewDetails(resource.id)}
+                          >
                             View Details
                           </Button>
-                          <Button variant="outline" size="sm" className="border-teal text-teal hover:bg-teal/5">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="border-teal text-teal hover:bg-teal/5"
+                            onClick={() => handleUpdateProgress(resource.id)}
+                          >
                             Update Progress
                           </Button>
                         </div>
