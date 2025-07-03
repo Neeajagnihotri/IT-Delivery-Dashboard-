@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Download, X, Users, MapPin } from "lucide-react";
+import jsPDF from 'jspdf';
 
 interface ResourceExportModalProps {
   isOpen: boolean;
@@ -32,45 +33,85 @@ const resourcesByLocation = {
 
 export const ResourceExportModal: React.FC<ResourceExportModalProps> = ({ isOpen, onClose }) => {
   const handleDownload = () => {
-    const reportContent = generateReportContent();
-    const blob = new Blob([reportContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `resource-overview-report-${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  const generateReportContent = () => {
+    const pdf = new jsPDF();
     const date = new Date().toLocaleDateString();
-    let content = `RESOURCE OVERVIEW REPORT\nGenerated on: ${date}\n\n`;
     
-    content += `SUMMARY STATISTICS\n`;
-    content += `==================\n`;
-    content += `Total Resources: 247\n`;
-    content += `Billable Resources: 189\n`;
-    content += `Benched Resources: 34\n`;
-    content += `Shadow Resources: 24\n\n`;
+    // Set font and title
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('RESOURCE OVERVIEW REPORT', 20, 20);
     
-    content += `LOCATION DISTRIBUTION\n`;
-    content += `====================\n`;
-    content += `India: 145 resources\n`;
-    content += `US: 78 resources\n`;
-    content += `Canada: 24 resources\n\n`;
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`Generated on: ${date}`, 20, 30);
     
+    // Summary Statistics
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('SUMMARY STATISTICS', 20, 45);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Total Resources: 247', 20, 55);
+    pdf.text('Billable Resources: 189', 20, 62);
+    pdf.text('Benched Resources: 34', 20, 69);
+    pdf.text('Shadow Resources: 24', 20, 76);
+    
+    // Location Distribution
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('LOCATION DISTRIBUTION', 20, 90);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('India: 145 resources', 20, 100);
+    pdf.text('US: 78 resources', 20, 107);
+    pdf.text('Canada: 24 resources', 20, 114);
+    
+    let yPosition = 130;
+    
+    // Employee Details by Location
     Object.entries(resourcesByLocation).forEach(([location, resources]) => {
-      content += `${location.toUpperCase()} RESOURCES\n`;
-      content += `${'='.repeat(location.length + 10)}\n`;
+      // Check if we need a new page
+      if (yPosition > 250) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+      
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`${location.toUpperCase()} RESOURCES`, 20, yPosition);
+      yPosition += 10;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Employee ID', 20, yPosition);
+      pdf.text('Name', 60, yPosition);
+      pdf.text('Role', 110, yPosition);
+      pdf.text('City', 150, yPosition);
+      pdf.text('Status', 180, yPosition);
+      yPosition += 7;
+      
+      pdf.setFont('helvetica', 'normal');
       resources.forEach(resource => {
-        content += `${resource.employeeId} | ${resource.name} | ${resource.role} | ${resource.city} | ${resource.status}\n`;
+        if (yPosition > 270) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        pdf.text(resource.employeeId, 20, yPosition);
+        pdf.text(resource.name, 60, yPosition);
+        pdf.text(resource.role, 110, yPosition);
+        pdf.text(resource.city, 150, yPosition);
+        pdf.text(resource.status, 180, yPosition);
+        yPosition += 7;
       });
-      content += `\n`;
+      
+      yPosition += 10;
     });
     
-    return content;
+    // Save the PDF
+    pdf.save(`resource-overview-report-${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   const totalBillable = Object.values(resourcesByLocation).flat().filter(r => r.status === 'Billable').length;
@@ -213,7 +254,7 @@ export const ResourceExportModal: React.FC<ResourceExportModalProps> = ({ isOpen
           </Button>
           <Button onClick={handleDownload} style={{ backgroundColor: '#008080' }} className="text-white">
             <Download className="h-4 w-4 mr-2" />
-            Download Report
+            Download PDF Report
           </Button>
         </div>
       </DialogContent>

@@ -51,17 +51,17 @@ const resourceDetails: Record<string, {
 }> = {
   "1": {
     id: 1,
-    name: 'John Smith',
-    email: 'john.smith@zapcom.com',
-    phone: '+1 (555) 123-4567',
+    name: 'Rajesh Kumar',
+    email: 'rajesh.kumar@zapcom.com',
+    phone: '+91 9876543210',
     role: 'Senior Developer',
     department: 'Engineering',
-    location: 'New York',
+    location: 'Bangalore',
     experience: '5+ years',
-    joinDate: 'Jan 15, 2023',
+    joinDate: 'Jan 15, 2020',
     status: 'billable',
-    employeeId: 'EMP0001',
-    skills: ['React', 'Node.js', 'TypeScript'],
+    employeeId: 'EMP001',
+    skills: ['React', 'Node.js', 'TypeScript', 'MongoDB'],
     currentProjects: [
       {
         name: 'E-commerce Platform Redesign',
@@ -69,13 +69,6 @@ const resourceDetails: Record<string, {
         startDate: 'Mar 1, 2024',
         client: 'TechCorp Inc',
         role: 'Leading the frontend development for the new customer portal'
-      },
-      {
-        name: 'Mobile App Development',
-        status: 'Support',
-        startDate: 'Feb 15, 2024',
-        client: 'StartupXY',
-        role: 'Providing technical consultation and code reviews'
       }
     ],
     upcomingEngagements: [
@@ -90,10 +83,10 @@ const resourceDetails: Record<string, {
     ],
     performanceFeedback: [
       {
-        reviewer: 'Sarah Johnson (Project Manager)',
+        reviewer: 'Amit Singh (Tech Lead)',
         period: 'Q1 2024',
         rating: 4.5,
-        feedback: 'John consistently delivers high-quality code and shows excellent problem-solving skills.',
+        feedback: 'Rajesh consistently delivers high-quality code and shows excellent problem-solving skills.',
         strengths: ['Technical expertise', 'Leadership skills', 'Code quality'],
         improvementAreas: ['Documentation', 'Time estimation'],
         goals: ['Lead a major project', 'Improve documentation practices']
@@ -105,45 +98,45 @@ const resourceDetails: Record<string, {
   },
   "2": {
     id: 2,
-    name: 'Jane Doe',
-    email: 'jane.doe@zapcom.com',
-    phone: '+1 (555) 234-5678',
-    role: 'UX Designer',
-    department: 'Design',
-    location: 'Remote',
-    experience: '3+ years',
-    joinDate: 'Mar 10, 2023',
+    name: 'Priya Sharma',
+    email: 'priya.sharma@zapcom.com',
+    phone: '+91 9876543211',
+    role: 'QA Lead',
+    department: 'Quality Assurance',
+    location: 'Hyderabad',
+    experience: '4+ years',
+    joinDate: 'Mar 10, 2021',
     status: 'billable',
-    employeeId: 'EMP0002',
-    skills: ['Figma', 'React', 'User Research'],
+    employeeId: 'EMP002',
+    skills: ['Selenium', 'TestNG', 'API Testing', 'Performance Testing'],
     currentProjects: [
       {
-        name: 'Mobile Banking App',
+        name: 'Mobile Banking App Testing',
         status: 'Active',
         startDate: 'Jan 15, 2024',
         client: 'FinanceHub',
-        role: 'Lead UX designer for mobile interface design'
+        role: 'Lead QA engineer for comprehensive testing strategy'
       }
     ],
     upcomingEngagements: [
       {
-        project: 'Healthcare Portal Redesign',
+        project: 'Healthcare Portal Testing',
         client: 'MedTech Inc',
         startDate: 'Jul 15, 2024',
         endDate: 'Nov 30, 2024',
-        role: 'Senior UX Designer',
+        role: 'Senior QA Lead',
         status: 'Confirmed'
       }
     ],
     performanceFeedback: [
       {
-        reviewer: 'Alex Rodriguez (Design Director)',
+        reviewer: 'Kavitha Reddy (QA Manager)',
         period: 'Q1 2024',
         rating: 4.2,
-        feedback: 'Jane brings creative solutions and user-centered thinking to every project.',
-        strengths: ['User research', 'Design thinking', 'Attention to detail'],
-        improvementAreas: ['Prototyping speed', 'Cross-platform design'],
-        goals: ['Master advanced prototyping tools', 'Lead design system creation']
+        feedback: 'Priya brings excellent testing methodologies and quality assurance practices.',
+        strengths: ['Test automation', 'Quality standards', 'Team coordination'],
+        improvementAreas: ['Performance testing', 'Mobile testing'],
+        goals: ['Master mobile testing tools', 'Lead automation framework']
       }
     ],
     utilizationRate: 90,
@@ -152,17 +145,17 @@ const resourceDetails: Record<string, {
   },
   "3": {
     id: 3,
-    name: 'Mike Johnson',
-    email: 'mike.johnson@zapcom.com',
-    phone: '+1 (555) 345-6789',
+    name: 'Amit Singh',
+    email: 'amit.singh@zapcom.com',
+    phone: '+91 9876543212',
     role: 'DevOps Engineer',
     department: 'Engineering',
-    location: 'San Francisco',
-    experience: '4+ years',
+    location: 'Bangalore',
+    experience: '3+ years',
     joinDate: 'Aug 5, 2022',
     status: 'benched',
-    employeeId: 'EMP0003',
-    skills: ['AWS', 'Docker', 'Kubernetes'],
+    employeeId: 'EMP003',
+    skills: ['AWS', 'Docker', 'Kubernetes', 'Jenkins'],
     currentProjects: [],
     upcomingEngagements: [
       {
@@ -176,92 +169,92 @@ const resourceDetails: Record<string, {
     ],
     performanceFeedback: [
       {
-        reviewer: 'Emily Davis (Engineering Manager)',
+        reviewer: 'Rajesh Kumar (Senior Developer)',
         period: 'Q1 2024',
-        rating: 4.7,
-        feedback: 'Mike is an outstanding DevOps engineer with deep expertise in cloud infrastructure.',
-        strengths: ['Infrastructure automation', 'Cloud expertise', 'Problem solving'],
+        rating: 4.0,
+        feedback: 'Amit shows strong DevOps skills and is eager to learn new technologies.',
+        strengths: ['Infrastructure automation', 'Cloud services', 'Problem solving'],
         improvementAreas: ['Documentation', 'Knowledge sharing'],
-        goals: ['Develop internal training materials', 'Implement advanced monitoring']
+        goals: ['Complete AWS certification', 'Lead infrastructure project']
       }
     ],
     utilizationRate: 0,
-    projectSuccessRate: 95,
-    performanceRating: 4.7
+    projectSuccessRate: 85,
+    performanceRating: 4.0
   },
   "4": {
     id: 4,
-    name: 'Sarah Wilson',
-    email: 'sarah.wilson@zapcom.com',
-    phone: '+1 (555) 456-7890',
+    name: 'Sanjay Patel',
+    email: 'sanjay.patel@zapcom.com',
+    phone: '+91 9876543213',
     role: 'Frontend Developer',
     department: 'Engineering',
-    location: 'Austin',
+    location: 'Bangalore',
     experience: '2+ years',
     joinDate: 'Nov 20, 2023',
-    status: 'shadow',
-    employeeId: 'EMP0004',
-    skills: ['React', 'TypeScript', 'CSS'],
+    status: 'billable',
+    employeeId: 'EMP004',
+    skills: ['React', 'TypeScript', 'CSS', 'JavaScript'],
     currentProjects: [
       {
-        name: 'Internal Training Portal',
+        name: 'E-commerce Frontend',
         status: 'Active',
         startDate: 'Feb 1, 2024',
-        client: 'Internal',
-        role: 'Shadow developer learning advanced React patterns'
+        client: 'RetailTech',
+        role: 'Frontend developer for user interface development'
       }
     ],
     upcomingEngagements: [
       {
-        project: 'E-learning Platform',
-        client: 'EduTech Solutions',
+        project: 'Dashboard Redesign',
+        client: 'AnalyticsCorp',
         startDate: 'Sep 1, 2024',
         endDate: 'Jan 15, 2025',
-        role: 'Junior Frontend Developer',
+        role: 'Frontend Developer',
         status: 'Confirmed'
       }
     ],
     performanceFeedback: [
       {
-        reviewer: 'John Smith (Senior Developer)',
+        reviewer: 'Rajesh Kumar (Senior Developer)',
         period: 'Q1 2024',
         rating: 3.8,
-        feedback: 'Sarah shows great enthusiasm for learning and has made significant progress.',
-        strengths: ['Learning agility', 'Attention to detail', 'Positive attitude'],
-        improvementAreas: ['Technical depth', 'Independent problem solving'],
-        goals: ['Complete advanced React certification', 'Lead a small feature development']
+        feedback: 'Sanjay shows great enthusiasm for learning and has made good progress.',
+        strengths: ['Learning agility', 'UI development', 'Positive attitude'],
+        improvementAreas: ['Technical depth', 'Code optimization'],
+        goals: ['Complete React certification', 'Lead a feature development']
       }
     ],
-    utilizationRate: 60,
-    projectSuccessRate: 80,
+    utilizationRate: 80,
+    projectSuccessRate: 75,
     performanceRating: 3.8
   },
   "5": {
     id: 5,
-    name: 'David Brown',
-    email: 'david.brown@zapcom.com',
-    phone: '+1 (555) 567-8901',
+    name: 'Kavitha Reddy',
+    email: 'kavitha.reddy@zapcom.com',
+    phone: '+91 9876543214',
     role: 'Backend Developer',
     department: 'Engineering',
-    location: 'Seattle',
-    experience: '6+ years',
-    joinDate: 'May 15, 2022',
+    location: 'Hyderabad',
+    experience: '4+ years',
+    joinDate: 'May 15, 2021',
     status: 'billable',
-    employeeId: 'EMP0005',
-    skills: ['Python', 'PostgreSQL', 'Django'],
+    employeeId: 'EMP005',
+    skills: ['Python', 'PostgreSQL', 'Django', 'REST APIs'],
     currentProjects: [
       {
-        name: 'AI Analytics Dashboard',
+        name: 'API Development Project',
         status: 'Active',
         startDate: 'Dec 1, 2023',
         client: 'DataCore',
-        role: 'Backend architect for machine learning pipeline'
+        role: 'Backend architect for API development'
       }
     ],
     upcomingEngagements: [
       {
-        project: 'Blockchain Integration',
-        client: 'CryptoTech Inc',
+        project: 'Microservices Migration',
+        client: 'EnterpriseTech',
         startDate: 'Sep 15, 2024',
         endDate: 'Feb 28, 2025',
         role: 'Senior Backend Developer',
@@ -270,18 +263,198 @@ const resourceDetails: Record<string, {
     ],
     performanceFeedback: [
       {
-        reviewer: 'Lisa Anderson (Tech Lead)',
+        reviewer: 'Priya Sharma (QA Lead)',
         period: 'Q1 2024',
-        rating: 4.6,
-        feedback: 'David is a highly skilled backend developer with excellent architectural thinking.',
-        strengths: ['System architecture', 'API design', 'Performance optimization'],
-        improvementAreas: ['Frontend skills', 'Agile practices'],
-        goals: ['Learn modern frontend frameworks', 'Become certified Scrum Master']
+        rating: 4.3,
+        feedback: 'Kavitha is a skilled backend developer with excellent API design skills.',
+        strengths: ['API architecture', 'Database design', 'Code quality'],
+        improvementAreas: ['Frontend integration', 'Performance optimization'],
+        goals: ['Learn microservices patterns', 'Improve system performance']
       }
     ],
     utilizationRate: 95,
-    projectSuccessRate: 93,
+    projectSuccessRate: 90,
+    performanceRating: 4.3
+  },
+  "6": {
+    id: 6,
+    name: 'John Smith',
+    email: 'john.smith@zapcom.com',
+    phone: '+1 (555) 123-4567',
+    role: 'Architect',
+    department: 'Engineering',
+    location: 'Texas',
+    experience: '8+ years',
+    joinDate: 'Jan 10, 2019',
+    status: 'billable',
+    employeeId: 'EMP006',
+    skills: ['System Architecture', 'Microservices', 'Cloud Solutions', 'Team Leadership'],
+    currentProjects: [
+      {
+        name: 'Enterprise Architecture Design',
+        status: 'Active',
+        startDate: 'Jan 1, 2024',
+        client: 'CorporateTech',
+        role: 'Lead architect for system design and implementation'
+      }
+    ],
+    upcomingEngagements: [
+      {
+        project: 'Cloud Migration Strategy',
+        client: 'TechGlobal',
+        startDate: 'Aug 1, 2024',
+        endDate: 'Dec 31, 2024',
+        role: 'Chief Architect',
+        status: 'Confirmed'
+      }
+    ],
+    performanceFeedback: [
+      {
+        reviewer: 'Sarah Johnson (Engineering Director)',
+        period: 'Q1 2024',
+        rating: 4.8,
+        feedback: 'John is an exceptional architect with deep technical expertise.',
+        strengths: ['System design', 'Leadership', 'Strategic thinking'],
+        improvementAreas: ['Documentation', 'Mentoring junior staff'],
+        goals: ['Develop architecture guidelines', 'Build center of excellence']
+      }
+    ],
+    utilizationRate: 95,
+    projectSuccessRate: 98,
+    performanceRating: 4.8
+  },
+  "7": {
+    id: 7,
+    name: 'Sarah Johnson',
+    email: 'sarah.johnson@zapcom.com',
+    phone: '+1 (555) 234-5678',
+    role: 'Project Manager',
+    department: 'Management',
+    location: 'Texas',
+    experience: '6+ years',
+    joinDate: 'Mar 15, 2020',
+    status: 'billable',
+    employeeId: 'EMP007',
+    skills: ['Project Management', 'Agile', 'Scrum', 'Stakeholder Management'],
+    currentProjects: [
+      {
+        name: 'Digital Transformation Program',
+        status: 'Active',
+        startDate: 'Feb 1, 2024',
+        client: 'FinanceCorpUS',
+        role: 'Program manager overseeing multiple workstreams'
+      }
+    ],
+    upcomingEngagements: [
+      {
+        project: 'Agile Transformation',
+        client: 'ManufacturingInc',
+        startDate: 'Jul 1, 2024',
+        endDate: 'Dec 15, 2024',
+        role: 'Senior Project Manager',
+        status: 'Confirmed'
+      }
+    ],
+    performanceFeedback: [
+      {
+        reviewer: 'John Smith (Architect)',
+        period: 'Q1 2024',
+        rating: 4.6,
+        feedback: 'Sarah is an excellent project manager with strong leadership skills.',
+        strengths: ['Team coordination', 'Risk management', 'Client communication'],
+        improvementAreas: ['Technical depth', 'Agile coaching'],
+        goals: ['Complete PMP certification', 'Develop agile expertise']
+      }
+    ],
+    utilizationRate: 90,
+    projectSuccessRate: 94,
     performanceRating: 4.6
+  },
+  "8": {
+    id: 8,
+    name: 'Mike Chen',
+    email: 'mike.chen@zapcom.com',
+    phone: '+1 (647) 123-4567',
+    role: 'Full Stack Developer',
+    department: 'Engineering',
+    location: 'Toronto',
+    experience: '4+ years',
+    joinDate: 'Jun 20, 2022',
+    status: 'billable',
+    employeeId: 'EMP008',
+    skills: ['React', 'Node.js', 'MongoDB', 'Express'],
+    currentProjects: [
+      {
+        name: 'Customer Portal Development',
+        status: 'Active',
+        startDate: 'Jan 10, 2024',
+        client: 'RetailCanada',
+        role: 'Full stack developer for web application development'
+      }
+    ],
+    upcomingEngagements: [
+      {
+        project: 'E-learning Platform',
+        client: 'EduTech Canada',
+        startDate: 'Aug 15, 2024',
+        endDate: 'Jan 30, 2025',
+        role: 'Senior Full Stack Developer',
+        status: 'Confirmed'
+      }
+    ],
+    performanceFeedback: [
+      {
+        reviewer: 'Lisa Wang (UI/UX Designer)',
+        period: 'Q1 2024',
+        rating: 4.1,
+        feedback: 'Mike is a solid full stack developer with good technical skills.',
+        strengths: ['Full stack development', 'Problem solving', 'Code quality'],
+        improvementAreas: ['UI/UX understanding', 'Testing practices'],
+        goals: ['Improve frontend skills', 'Learn automated testing']
+      }
+    ],
+    utilizationRate: 85,
+    projectSuccessRate: 87,
+    performanceRating: 4.1
+  },
+  "9": {
+    id: 9,
+    name: 'Lisa Wang',
+    email: 'lisa.wang@zapcom.com',
+    phone: '+1 (604) 123-4567',
+    role: 'UI/UX Designer',
+    department: 'Design',
+    location: 'Vancouver',
+    experience: '3+ years',
+    joinDate: 'Sep 10, 2023',
+    status: 'benched',
+    employeeId: 'EMP009',
+    skills: ['Figma', 'Adobe XD', 'User Research', 'Prototyping'],
+    currentProjects: [],
+    upcomingEngagements: [
+      {
+        project: 'Mobile App Design',
+        client: 'StartupCanada',
+        startDate: 'Aug 1, 2024',
+        endDate: 'Nov 15, 2024',
+        role: 'Lead UI/UX Designer',
+        status: 'Pipeline'
+      }
+    ],
+    performanceFeedback: [
+      {
+        reviewer: 'Mike Chen (Full Stack Developer)',
+        period: 'Q1 2024',
+        rating: 3.9,
+        feedback: 'Lisa shows great design thinking and user-centered approach.',
+        strengths: ['Design creativity', 'User research', 'Attention to detail'],
+        improvementAreas: ['Prototyping speed', 'Design systems'],
+        goals: ['Master advanced prototyping', 'Build design system expertise']
+      }
+    ],
+    utilizationRate: 0,
+    projectSuccessRate: 82,
+    performanceRating: 3.9
   }
 };
 
