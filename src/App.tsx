@@ -3,8 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './components/auth/AuthContext';
 import { Dashboard } from './components/dashboard/Dashboard';
-import LoginPage from './components/auth/Login';
-import PrivateRoute from './components/auth/ProtectedRoute';
+import { Login } from './components/auth/Login';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import CorporateStructurePage from './components/corporate/pages/CorporateStructurePage';
 import ResourceManagementPage from './components/corporate/pages/ResourceManagementPage';
 import { AddResourcePage } from './components/corporate/pages/AddResourcePage';
@@ -19,14 +19,14 @@ function App() {
         <ProjectProvider>
           <div className="min-h-screen">
             <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-              <Route path="/corporate-structure" element={<PrivateRoute><CorporateStructurePage /></PrivateRoute>} />
-              <Route path="/resource-management" element={<PrivateRoute><ResourceManagementPage /></PrivateRoute>} />
-              <Route path="/add-resource" element={<PrivateRoute><AddResourcePage /></PrivateRoute>} />
-              <Route path="/add-project" element={<PrivateRoute><AddProjectPage /></PrivateRoute>} />
-              <Route path="/project/:projectId" element={<PrivateRoute><ProjectDetailView /></PrivateRoute>} />
-              <Route path="/active-projects" element={<PrivateRoute><ResourceManagementPage /></PrivateRoute>} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/corporate-structure" element={<ProtectedRoute><CorporateStructurePage /></ProtectedRoute>} />
+              <Route path="/resource-management" element={<ProtectedRoute><ResourceManagementPage /></ProtectedRoute>} />
+              <Route path="/add-resource" element={<ProtectedRoute><AddResourcePage /></ProtectedRoute>} />
+              <Route path="/add-project" element={<ProtectedRoute><AddProjectPage /></ProtectedRoute>} />
+              <Route path="/project/:projectId" element={<ProtectedRoute><ProjectDetailView /></ProtectedRoute>} />
+              <Route path="/active-projects" element={<ProtectedRoute><ResourceManagementPage /></ProtectedRoute>} />
             </Routes>
           </div>
         </ProjectProvider>
