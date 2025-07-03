@@ -37,8 +37,19 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
   });
 
   useEffect(() => {
-    if (resource) {
-      console.log('Setting form data for resource:', resource);
+    if (resource && isOpen) {
+      console.log('EditResourceModal - Setting form data for resource:', resource);
+      
+      // Handle skills conversion
+      let skillsString = '';
+      if (Array.isArray(resource.skills)) {
+        skillsString = resource.skills.join(', ');
+      } else if (typeof resource.skills === 'string') {
+        skillsString = resource.skills;
+      } else {
+        skillsString = 'React, TypeScript, Node.js, AWS';
+      }
+
       setFormData({
         name: resource.name || '',
         role: resource.role || '',
@@ -49,7 +60,7 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
         email: resource.email || `${resource.name?.toLowerCase().replace(' ', '.')}@zapcom.com` || '',
         phone: resource.phone || '+1 (555) 123-4567',
         salary: resource.salary || '',
-        skills: Array.isArray(resource.skills) ? resource.skills.join(', ') : (resource.skills || 'React, TypeScript, Node.js, AWS'),
+        skills: skillsString,
         joinDate: resource.joinDate || '2023-01-15',
         projects: resource.projects || 0
       });
@@ -57,7 +68,7 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
   }, [resource, isOpen]);
 
   const handleInputChange = (field: string, value: string | number) => {
-    console.log(`Updating field ${field} with value:`, value);
+    console.log(`EditResourceModal - Updating field ${field} with value:`, value);
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -65,25 +76,31 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
   };
 
   const handleSave = () => {
-    console.log('Saving form data:', formData);
+    console.log('EditResourceModal - Saving form data:', formData);
+    
+    // Process skills back to array format
+    const skillsArray = formData.skills
+      .split(',')
+      .map(skill => skill.trim())
+      .filter(skill => skill.length > 0);
     
     const updatedResource = {
       ...resource,
       ...formData,
-      skills: formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0)
+      skills: skillsArray
     };
     
-    console.log('Updated resource being saved:', updatedResource);
+    console.log('EditResourceModal - Updated resource being saved:', updatedResource);
     onSave(updatedResource);
   };
 
   const handleClose = () => {
-    console.log('Closing edit modal');
+    console.log('EditResourceModal - Closing modal');
     onClose();
   };
 
   if (!resource) {
-    console.log('No resource provided to EditResourceModal');
+    console.log('EditResourceModal - No resource provided');
     return null;
   }
 
@@ -107,6 +124,7 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 className="border-slate/30 focus:border-teal"
+                placeholder="Enter full name"
               />
             </div>
             
@@ -117,6 +135,7 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
                 value={formData.role}
                 onChange={(e) => handleInputChange('role', e.target.value)}
                 className="border-slate/30 focus:border-teal"
+                placeholder="Enter role"
               />
             </div>
             
@@ -145,6 +164,7 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
                 value={formData.location}
                 onChange={(e) => handleInputChange('location', e.target.value)}
                 className="border-slate/30 focus:border-teal"
+                placeholder="Enter location"
               />
             </div>
             
@@ -185,6 +205,7 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 className="border-slate/30 focus:border-teal"
+                placeholder="Enter email address"
               />
             </div>
             
@@ -195,6 +216,7 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 className="border-slate/30 focus:border-teal"
+                placeholder="Enter phone number"
               />
             </div>
             
@@ -217,6 +239,7 @@ export const EditResourceModal: React.FC<EditResourceModalProps> = ({
                 value={formData.projects}
                 onChange={(e) => handleInputChange('projects', parseInt(e.target.value) || 0)}
                 className="border-slate/30 focus:border-teal"
+                placeholder="Number of projects"
               />
             </div>
           </div>

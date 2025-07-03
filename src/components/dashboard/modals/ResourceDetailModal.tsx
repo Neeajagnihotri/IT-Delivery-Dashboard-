@@ -36,13 +36,19 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource, onResourceUp
   const [currentResource, setCurrentResource] = useState(resource);
   
   useEffect(() => {
-    setCurrentResource(resource);
+    if (resource) {
+      console.log('ResourceDetailModal - Setting resource:', resource);
+      setCurrentResource(resource);
+    }
   }, [resource]);
   
-  if (!currentResource) return null;
+  if (!currentResource) {
+    console.log('ResourceDetailModal - No resource provided');
+    return null;
+  }
 
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'billable': return 'bg-teal';
       case 'benched': return 'bg-slate';
       case 'shadow': return 'bg-charcoal';
@@ -52,10 +58,12 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource, onResourceUp
   };
 
   const getInitials = (name: string) => {
+    if (!name) return 'N/A';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
   const handleViewFullProfile = () => {
+    console.log('Navigating to full profile for resource:', currentResource.id);
     onOpenChange(false);
     navigate(`/resource-detail/${currentResource.id}`);
   };
@@ -66,15 +74,20 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource, onResourceUp
   };
 
   const handleSaveResource = (updatedResource: any) => {
-    console.log('Saving updated resource:', updatedResource);
+    console.log('ResourceDetailModal - Saving updated resource:', updatedResource);
+    
+    // Update the current resource state
     setCurrentResource(updatedResource);
     
-    // Call the callback to update parent component if provided
+    // Call the parent callback to update the resource in the parent component
     if (onResourceUpdate) {
       onResourceUpdate(updatedResource);
     }
     
+    // Close the edit modal
     setShowEditModal(false);
+    
+    console.log('ResourceDetailModal - Resource updated successfully');
   };
 
   const handleCloseEditModal = () => {
@@ -108,30 +121,30 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource, onResourceUp
                     <div className="flex items-start justify-between">
                       <div>
                         <h2 className="text-2xl font-bold text-deep-blue mb-1">
-                          {currentResource.name}
+                          {currentResource.name || 'Unknown'}
                         </h2>
                         <p className="text-lg text-slate mb-2">
-                          {currentResource.role}
+                          {currentResource.role || 'Role not specified'}
                         </p>
                         <div className="flex items-center gap-4 text-sm text-slate">
                           <div className="flex items-center gap-1">
                             <MapPin className="h-4 w-4" />
-                            {currentResource.location}
+                            {currentResource.location || 'Location not specified'}
                           </div>
                           <div className="flex items-center gap-1">
                             <Briefcase className="h-4 w-4" />
-                            {currentResource.department}
+                            {currentResource.department || 'Department not specified'}
                           </div>
                           <div className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
-                            {currentResource.experience} experience
+                            {currentResource.experience || 'Experience not specified'}
                           </div>
                         </div>
                       </div>
                       
                       <div className="text-right">
                         <Badge className={`${getStatusColor(currentResource.status)} text-white mb-2`}>
-                          {currentResource.status}
+                          {currentResource.status || 'Status not specified'}
                         </Badge>
                         <div className="flex items-center gap-1 text-sm text-slate">
                           <DollarSign className="h-4 w-4" />
@@ -154,7 +167,7 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource, onResourceUp
                 <CardContent className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Mail className="h-4 w-4 text-slate" />
-                    <span className="text-deep-blue">{currentResource.email || `${currentResource.name.toLowerCase().replace(' ', '.')}@zapcom.com`}</span>
+                    <span className="text-deep-blue">{currentResource.email || `${currentResource.name?.toLowerCase().replace(' ', '.')}@zapcom.com`}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="h-4 w-4 text-slate" />
@@ -162,7 +175,7 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource, onResourceUp
                   </div>
                   <div className="flex items-center gap-3">
                     <User className="h-4 w-4 text-slate" />
-                    <span className="text-deep-blue">Employee ID: EMP{currentResource.id.toString().padStart(4, '0')}</span>
+                    <span className="text-deep-blue">Employee ID: EMP{currentResource.id?.toString().padStart(4, '0') || '0000'}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Calendar className="h-4 w-4 text-slate" />
@@ -286,7 +299,8 @@ export const ResourceDetailModal = ({ open, onOpenChange, resource, onResourceUp
         </DialogContent>
       </Dialog>
 
-      {showEditModal && (
+      {/* Edit Resource Modal */}
+      {showEditModal && currentResource && (
         <EditResourceModal
           isOpen={showEditModal}
           onClose={handleCloseEditModal}
