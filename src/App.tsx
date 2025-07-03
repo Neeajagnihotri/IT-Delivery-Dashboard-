@@ -43,6 +43,7 @@ import { BillableResourcesKPIDetail } from "@/components/corporate/pages/Billabl
 import { ShadowResourcesKPIDetail } from "@/components/corporate/pages/ShadowResourcesKPIDetail";
 import { InternalResourcesKPIDetail } from "@/components/corporate/pages/InternalResourcesKPIDetail";
 import { ZapmindsResourcesKPIDetail } from "@/components/corporate/pages/ZapmindsResourcesKPIDetail";
+import { ResourceDetailPage } from "@/components/corporate/pages/ResourceDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ const App = () => (
                 <Route path="resource-kpi/shadow-resources" element={<ShadowResourcesKPIDetail />} />
                 <Route path="resource-kpi/internal-resources" element={<InternalResourcesKPIDetail />} />
                 <Route path="resource-kpi/zapminds-resources" element={<ZapmindsResourcesKPIDetail />} />
+                <Route path="resource-detail/:id" element={<ResourceDetailPage />} />
                 <Route path="active-projects" element={<ActiveProjectsDetail />} />
                 <Route path="resource-utilization" element={<ResourceUtilizationDetail />} />
                 <Route path="benched-resources" element={<BenchedResourcesView />} />

@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Mail, Phone, MapPin, Calendar, Award, Star, Briefcase } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, User, Mail, Phone, MapPin, Calendar, Award, Star, Briefcase, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // Mock data - in real app this would come from API
@@ -18,37 +19,51 @@ const resourceDetails: Record<string, {
   experience: string;
   joinDate: string;
   status: string;
-  salary: string;
+  employeeId: string;
   skills: string[];
-  currentProject: string;
-  projectManager: string;
-  utilization: string;
-  rating: number;
-  certifications: string[];
-  recentProjects: Array<{ name: string; duration: string; role: string; }>;
+  currentProjects: Array<{
+    name: string;
+    status: string;
+    startDate: string;
+    client: string;
+    role: string;
+  }>;
+  utilizationRate: number;
+  projectSuccessRate: number;
+  performanceRating: number;
 }> = {
   "1": {
     id: 1,
-    name: 'Rajesh Kumar',
-    email: 'rajesh.kumar@zapcom.com',
-    phone: '+91 9876543210',
+    name: 'John Smith',
+    email: 'john.smith@zapcom.com',
+    phone: '+1 (555) 123-4567',
     role: 'Senior Developer',
     department: 'Engineering',
-    location: 'Bangalore, India',
-    experience: '5+ years',
-    joinDate: '2021-03-15',
-    status: 'Billable',
-    salary: '₹1,20,000',
-    skills: ['React', 'Node.js', 'JavaScript', 'TypeScript', 'AWS'],
-    currentProject: 'E-commerce Platform',
-    projectManager: 'Sarah Johnson',
-    utilization: '85%',
-    rating: 4.2,
-    certifications: ['AWS Certified Developer', 'React Specialist'],
-    recentProjects: [
-      { name: 'E-commerce Platform', duration: '6 months', role: 'Lead Developer' },
-      { name: 'Banking App', duration: '4 months', role: 'Frontend Developer' },
-    ]
+    location: 'New York',
+    experience: '5+ years experience',
+    joinDate: 'Jan 15, 2023',
+    status: 'billable',
+    employeeId: 'EMP0001',
+    skills: ['React', 'Node.js', 'TypeScript'],
+    currentProjects: [
+      {
+        name: 'E-commerce Platform Redesign',
+        status: 'Active',
+        startDate: 'Mar 1, 2024',
+        client: 'TechCorp Inc',
+        role: 'Leading the frontend development for the new customer portal'
+      },
+      {
+        name: 'Mobile App Development',
+        status: 'Support',
+        startDate: 'Feb 15, 2024',
+        client: 'StartupXY',
+        role: 'Providing technical consultation and code reviews'
+      }
+    ],
+    utilizationRate: 85,
+    projectSuccessRate: 92,
+    performanceRating: 4.5
   }
 };
 
@@ -70,175 +85,194 @@ export const ResourceDetailPage = () => {
     );
   }
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'billable':
+        return { bg: '#008080', text: 'Billable' };
+      case 'benched':
+        return { bg: '#374B4F', text: 'Available' };
+      case 'shadow':
+        return { bg: '#22356F', text: 'Shadow' };
+      default:
+        return { bg: '#374B4F', text: status };
+    }
+  };
+
+  const statusBadge = getStatusBadge(resource.status);
+
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: '#F5F7FA' }}>
-      <div className="max-w-6xl mx-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-4">
-            <div className="p-3 rounded-2xl shadow-lg" style={{ background: 'linear-gradient(135deg, #22356F 0%, #008080 100%)' }}>
-              <User className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold mb-2" style={{ color: '#22356F' }}>{resource.name}</h1>
-              <p style={{ color: '#374B4F' }}>Detailed Resource Information</p>
-            </div>
+        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+          <div className="flex items-center space-x-3">
+            <User className="h-6 w-6" style={{ color: '#22356F' }} />
+            <h1 className="text-xl font-bold" style={{ color: '#22356F' }}>Resource Profile</h1>
           </div>
           <Button
-            variant="outline"
+            variant="ghost"
+            size="sm"
             onClick={() => navigate(-1)}
-            className="border-2 hover:bg-opacity-90"
-            style={{ borderColor: '#374B4F', color: '#22356F', backgroundColor: '#F5F7FA' }}
+            className="hover:bg-slate-100"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            <X className="h-5 w-5" />
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Personal Information */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card className="bg-white rounded-2xl shadow-lg border-2" style={{ borderColor: '#22356F20' }}>
-              <CardHeader>
-                <CardTitle style={{ color: '#22356F' }}>Personal Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5" style={{ color: '#008080' }} />
-                    <div>
-                      <p className="text-sm font-medium" style={{ color: '#22356F' }}>Email</p>
-                      <p className="text-sm" style={{ color: '#374B4F' }}>{resource.email}</p>
-                    </div>
+        <div className="p-6">
+          {/* Profile Header */}
+          <div className="flex items-start justify-between mb-8">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl" style={{ backgroundColor: '#008080' }}>
+                {resource.name.split(' ').map(n => n[0]).join('')}
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold mb-1" style={{ color: '#22356F' }}>{resource.name}</h2>
+                <p className="text-slate-600 mb-1">{resource.role}</p>
+                <div className="flex items-center space-x-4 text-sm text-slate-500">
+                  <div className="flex items-center space-x-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{resource.location}</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <Phone className="h-5 w-5" style={{ color: '#008080' }} />
-                    <div>
-                      <p className="text-sm font-medium" style={{ color: '#22356F' }}>Phone</p>
-                      <p className="text-sm" style={{ color: '#374B4F' }}>{resource.phone}</p>
-                    </div>
+                  <div className="flex items-center space-x-1">
+                    <Briefcase className="h-4 w-4" />
+                    <span>{resource.department}</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <MapPin className="h-5 w-5" style={{ color: '#008080' }} />
-                    <div>
-                      <p className="text-sm font-medium" style={{ color: '#22356F' }}>Location</p>
-                      <p className="text-sm" style={{ color: '#374B4F' }}>{resource.location}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Calendar className="h-5 w-5" style={{ color: '#008080' }} />
-                    <div>
-                      <p className="text-sm font-medium" style={{ color: '#22356F' }}>Join Date</p>
-                      <p className="text-sm" style={{ color: '#374B4F' }}>{new Date(resource.joinDate).toLocaleDateString()}</p>
-                    </div>
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="h-4 w-4" />
+                    <span>{resource.experience}</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Skills */}
-            <Card className="bg-white rounded-2xl shadow-lg border-2" style={{ borderColor: '#22356F20' }}>
-              <CardHeader>
-                <CardTitle style={{ color: '#22356F' }}>Skills & Expertise</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {resource.skills.map((skill, index) => (
-                    <Badge key={index} className="border-2" style={{ backgroundColor: '#008080/10', color: '#008080', borderColor: '#008080/20' }}>
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recent Projects */}
-            <Card className="bg-white rounded-2xl shadow-lg border-2" style={{ borderColor: '#22356F20' }}>
-              <CardHeader>
-                <CardTitle style={{ color: '#22356F' }}>Recent Projects</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {resource.recentProjects.map((project, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: '#F5F7FA' }}>
-                      <div className="flex items-center space-x-3">
-                        <Briefcase className="h-5 w-5" style={{ color: '#008080' }} />
-                        <div>
-                          <p className="font-medium" style={{ color: '#22356F' }}>{project.name}</p>
-                          <p className="text-sm" style={{ color: '#374B4F' }}>{project.role}</p>
-                        </div>
-                      </div>
-                      <Badge variant="outline" style={{ borderColor: '#374B4F', color: '#374B4F' }}>
-                        {project.duration}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+            <div className="text-right">
+              <Badge className="mb-2 text-white" style={{ backgroundColor: statusBadge.bg }}>
+                {statusBadge.text}
+              </Badge>
+              <p className="text-sm text-slate-500">Not specified</p>
+            </div>
           </div>
 
-          {/* Summary Card */}
-          <div className="space-y-6">
-            <Card className="bg-white rounded-2xl shadow-lg border-2" style={{ borderColor: '#22356F20' }}>
-              <CardHeader>
-                <CardTitle style={{ color: '#22356F' }}>Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold mb-2" style={{ color: '#22356F' }}>{resource.role}</div>
-                  <Badge className="mb-4" style={{ 
-                    backgroundColor: resource.status === 'Billable' ? '#008080' : '#374B4F',
-                    color: 'white'
-                  }}>
-                    {resource.status}
-                  </Badge>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column */}
+            <div className="space-y-6">
+              {/* Contact Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle style={{ color: '#22356F' }}>Contact Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <Mail className="h-5 w-5 text-slate-400" />
+                    <span className="text-sm">{resource.email}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Phone className="h-5 w-5 text-slate-400" />
+                    <span className="text-sm">{resource.phone}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <User className="h-5 w-5 text-slate-400" />
+                    <span className="text-sm">Employee ID: {resource.employeeId}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Calendar className="h-5 w-5 text-slate-400" />
+                    <span className="text-sm">Joined: {resource.joinDate}</span>
+                  </div>
+                </CardContent>
+              </Card>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm" style={{ color: '#374B4F' }}>Department:</span>
-                    <span className="text-sm font-medium" style={{ color: '#22356F' }}>{resource.department}</span>
+              {/* Skills & Expertise */}
+              <Card>
+                <CardHeader>
+                  <CardTitle style={{ color: '#22356F' }}>Skills & Expertise</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {resource.skills.map((skill, index) => (
+                      <Badge key={index} variant="outline" className="border-slate-300">
+                        {skill}
+                      </Badge>
+                    ))}
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm" style={{ color: '#374B4F' }}>Experience:</span>
-                    <span className="text-sm font-medium" style={{ color: '#22356F' }}>{resource.experience}</span>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column */}
+            <div className="space-y-6">
+              {/* Performance Metrics */}
+              <Card>
+                <CardHeader>
+                  <CardTitle style={{ color: '#22356F' }}>Performance Metrics</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Utilization Rate</span>
+                      <span className="font-semibold" style={{ color: '#008080' }}>{resource.utilizationRate}%</span>
+                    </div>
+                    <Progress value={resource.utilizationRate} className="h-2" />
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm" style={{ color: '#374B4F' }}>Current Project:</span>
-                    <span className="text-sm font-medium" style={{ color: '#22356F' }}>{resource.currentProject}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm" style={{ color: '#374B4F' }}>Utilization:</span>
-                    <span className="text-sm font-medium" style={{ color: '#22356F' }}>{resource.utilization}</span>
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Project Success Rate</span>
+                      <span className="font-semibold" style={{ color: '#008080' }}>{resource.projectSuccessRate}%</span>
+                    </div>
+                    <Progress value={resource.projectSuccessRate} className="h-2" />
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm" style={{ color: '#374B4F' }}>Rating:</span>
+                    <span className="text-sm">Performance Rating</span>
                     <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                      <span className="text-sm font-medium" style={{ color: '#22356F' }}>{resource.rating}</span>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`h-4 w-4 ${star <= resource.performanceRating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                        />
+                      ))}
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
-            {/* Certifications */}
-            <Card className="bg-white rounded-2xl shadow-lg border-2" style={{ borderColor: '#22356F20' }}>
-              <CardHeader>
-                <CardTitle style={{ color: '#22356F' }}>Certifications</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {resource.certifications.map((cert, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <Award className="h-4 w-4" style={{ color: '#008080' }} />
-                      <span className="text-sm" style={{ color: '#374B4F' }}>{cert}</span>
+          {/* Current Projects */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle style={{ color: '#22356F' }}>Current Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {resource.currentProjects.map((project, index) => (
+                  <div key={index} className="border border-slate-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold" style={{ color: '#22356F' }}>{project.name}</h4>
+                      <Badge 
+                        className="text-white"
+                        style={{ backgroundColor: project.status === 'Active' ? '#008080' : '#374B4F' }}
+                      >
+                        {project.status}
+                      </Badge>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    <p className="text-sm text-slate-600 mb-2">{project.role}</p>
+                    <div className="flex items-center space-x-4 text-xs text-slate-500">
+                      <span>Started: {project.startDate}</span>
+                      <span>Client: {project.client}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end space-x-3 mt-8">
+            <Button variant="outline" onClick={() => navigate(-1)}>
+              Close
+            </Button>
+            <Button style={{ backgroundColor: '#008080' }} className="text-white">
+              Edit Profile
+            </Button>
           </div>
         </div>
       </div>
