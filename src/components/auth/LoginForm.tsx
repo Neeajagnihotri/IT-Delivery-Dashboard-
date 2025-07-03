@@ -26,7 +26,7 @@ export const LoginForm = () => {
           <div className="flex justify-center mb-4">
             <div className="p-3 bg-white rounded-xl">
               <img 
-                src="/lovable-uploads/216855ee-51f0-4eac-8ba9-ddb78fc2d04c.png" 
+                src="/lovable-uploads/0b182268-2014-40ef-ab6e-302382df73dc.png" 
                 alt="Zapcom Logo" 
                 className="h-12 w-auto"
               />

@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -277,7 +278,7 @@ export const CorporateHeader = ({ onSidebarToggle, user }: CorporateHeaderProps)
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-white rounded-lg">
             <img 
-              src="/lovable-uploads/be66b7b1-2eaf-4a1f-8293-a70e0bf4541e.png" 
+              src="/lovable-uploads/0b182268-2014-40ef-ab6e-302382df73dc.png" 
               alt="Zapcom Logo" 
               className="h-8 w-auto"
             />
