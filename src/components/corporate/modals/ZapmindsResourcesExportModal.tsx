@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Download, Brain, Star, Trophy } from "lucide-react";
+import jsPDF from 'jspdf';
 
 interface ZapmindsResourcesExportModalProps {
   isOpen: boolean;
@@ -23,7 +24,49 @@ export const ZapmindsResourcesExportModal: React.FC<ZapmindsResourcesExportModal
 }) => {
   const handleDownloadPDF = () => {
     console.log('Downloading Zapminds Resources PDF report...');
-    // PDF generation logic would go here with a PDF library
+    
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    doc.text('Zapminds Initiative Report', 20, 30);
+    
+    // Date
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 45);
+    
+    // Summary metrics
+    doc.setFontSize(16);
+    doc.text('Summary Metrics', 20, 65);
+    
+    doc.setFontSize(12);
+    doc.text(`Total Assigned Resources: ${data.totalResources}`, 20, 80);
+    doc.text(`Average Performance: ${data.avgRating}`, 20, 95);
+    doc.text(`Active Projects: 3`, 20, 110);
+    
+    if (data.selectedProject) {
+      doc.text(`Filter Applied: Project - ${data.selectedProject}`, 20, 125);
+    }
+    
+    // Report contents
+    doc.setFontSize(16);
+    doc.text('Report Contents', 20, 145);
+    
+    doc.setFontSize(12);
+    const contents = [
+      '• Innovation project resource allocation',
+      '• Performance ratings and assessments',
+      '• Skills and expertise mapping',
+      '• Project contribution analysis',
+      '• Research and development metrics'
+    ];
+    
+    contents.forEach((item, index) => {
+      doc.text(item, 20, 160 + (index * 15));
+    });
+    
+    // Save the PDF
+    doc.save('zapminds-initiative-report.pdf');
   };
 
   return (

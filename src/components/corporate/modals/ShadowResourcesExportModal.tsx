@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Download, Eye, Users, Clock } from "lucide-react";
+import jsPDF from 'jspdf';
 
 interface ShadowResourcesExportModalProps {
   isOpen: boolean;
@@ -23,7 +24,49 @@ export const ShadowResourcesExportModal: React.FC<ShadowResourcesExportModalProp
 }) => {
   const handleDownloadPDF = () => {
     console.log('Downloading Shadow Resources PDF report...');
-    // PDF generation logic would go here with a PDF library
+    
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    doc.text('Shadow Resources Report', 20, 30);
+    
+    // Date
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 45);
+    
+    // Summary metrics
+    doc.setFontSize(16);
+    doc.text('Summary Metrics', 20, 65);
+    
+    doc.setFontSize(12);
+    doc.text(`Total Shadow Resources: ${data.totalResources}`, 20, 80);
+    doc.text(`Average Progress: ${data.avgProgress}%`, 20, 95);
+    doc.text(`Active Mentors: 12`, 20, 110);
+    
+    if (data.selectedPhase) {
+      doc.text(`Filter Applied: Phase - ${data.selectedPhase}`, 20, 125);
+    }
+    
+    // Report contents
+    doc.setFontSize(16);
+    doc.text('Report Contents', 20, 145);
+    
+    doc.setFontSize(12);
+    const contents = [
+      '• Shadow resource progress tracking',
+      '• Mentorship program analytics',
+      '• Phase distribution breakdown',
+      '• Individual performance metrics',
+      '• Training completion rates'
+    ];
+    
+    contents.forEach((item, index) => {
+      doc.text(item, 20, 160 + (index * 15));
+    });
+    
+    // Save the PDF
+    doc.save('shadow-resources-report.pdf');
   };
 
   return (

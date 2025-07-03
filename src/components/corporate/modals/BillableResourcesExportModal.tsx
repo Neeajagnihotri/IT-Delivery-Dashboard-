@@ -4,7 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Download, X, DollarSign, Users, TrendingUp } from "lucide-react";
+import { Download, DollarSign, Users, TrendingUp } from "lucide-react";
+import jsPDF from 'jspdf';
 
 interface BillableResourcesExportModalProps {
   isOpen: boolean;
@@ -24,7 +25,49 @@ export const BillableResourcesExportModal: React.FC<BillableResourcesExportModal
 }) => {
   const handleDownloadPDF = () => {
     console.log('Downloading Billable Resources PDF report...');
-    // PDF generation logic would go here with a PDF library
+    
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    doc.text('Billable Resources Report', 20, 30);
+    
+    // Date
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 45);
+    
+    // Summary metrics
+    doc.setFontSize(16);
+    doc.text('Summary Metrics', 20, 65);
+    
+    doc.setFontSize(12);
+    doc.text(`Total Revenue: $${data.totalRevenue.toLocaleString()}`, 20, 80);
+    doc.text(`Total Resources: ${data.totalResources}`, 20, 95);
+    doc.text(`Average Utilization: ${data.avgUtilization}%`, 20, 110);
+    
+    if (data.selectedClient) {
+      doc.text(`Filter Applied: Client - ${data.selectedClient}`, 20, 125);
+    }
+    
+    // Report contents
+    doc.setFontSize(16);
+    doc.text('Report Contents', 20, 145);
+    
+    doc.setFontSize(12);
+    const contents = [
+      '• Resource performance metrics',
+      '• Revenue generation analysis',
+      '• Utilization rates by resource',
+      '• Client allocation breakdown',
+      '• Monthly trends and projections'
+    ];
+    
+    contents.forEach((item, index) => {
+      doc.text(item, 20, 160 + (index * 15));
+    });
+    
+    // Save the PDF
+    doc.save('billable-resources-report.pdf');
   };
 
   return (

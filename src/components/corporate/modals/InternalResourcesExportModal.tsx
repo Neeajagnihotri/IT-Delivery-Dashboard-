@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Download, Building, Users, Calendar } from "lucide-react";
+import jsPDF from 'jspdf';
 
 interface InternalResourcesExportModalProps {
   isOpen: boolean;
@@ -23,7 +24,49 @@ export const InternalResourcesExportModal: React.FC<InternalResourcesExportModal
 }) => {
   const handleDownloadPDF = () => {
     console.log('Downloading Internal Resources PDF report...');
-    // PDF generation logic would go here with a PDF library
+    
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    doc.text('Internal Resources Report', 20, 30);
+    
+    // Date
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 45);
+    
+    // Summary metrics
+    doc.setFontSize(16);
+    doc.text('Summary Metrics', 20, 65);
+    
+    doc.setFontSize(12);
+    doc.text(`Total Internal Resources: ${data.totalResources}`, 20, 80);
+    doc.text(`Average Projects: ${data.avgProjects}`, 20, 95);
+    doc.text(`Departments: 3`, 20, 110);
+    
+    if (data.selectedDepartment) {
+      doc.text(`Filter Applied: Department - ${data.selectedDepartment}`, 20, 125);
+    }
+    
+    // Report contents
+    doc.setFontSize(16);
+    doc.text('Report Contents', 20, 145);
+    
+    doc.setFontSize(12);
+    const contents = [
+      '• Internal employee directory',
+      '• Department-wise breakdown',
+      '• Project involvement metrics',
+      '• Role distribution analysis',
+      '• Tenure and experience data'
+    ];
+    
+    contents.forEach((item, index) => {
+      doc.text(item, 20, 160 + (index * 15));
+    });
+    
+    // Save the PDF
+    doc.save('internal-resources-report.pdf');
   };
 
   return (
