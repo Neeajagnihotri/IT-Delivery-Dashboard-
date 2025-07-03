@@ -5,84 +5,19 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { FolderOpen, Users, Calendar, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
-
-const mockProjects = [
-  {
-    id: 1,
-    name: "E-commerce Platform Redesign",
-    client: "TechCorp Inc.",
-    manager: "Sarah Johnson",
-    status: "Active",
-    progress: 75,
-    resourceCount: 8,
-    startDate: "2024-01-15",
-    endDate: "2024-06-30",
-    budget: "$250,000",
-    skills: ["React", "Node.js", "AWS", "TypeScript"]
-  },
-  {
-    id: 2,
-    name: "Mobile Banking App",
-    client: "FinanceHub",
-    manager: "Michael Chen",
-    status: "Active",
-    progress: 45,
-    resourceCount: 6,
-    startDate: "2024-02-01",
-    endDate: "2024-08-15",
-    budget: "$180,000",
-    skills: ["React Native", "Python", "PostgreSQL"]
-  },
-  {
-    id: 3,
-    name: "AI Analytics Dashboard",
-    client: "DataCore",
-    manager: "David Lee",
-    status: "Planning",
-    progress: 15,
-    resourceCount: 3,
-    startDate: "2024-04-01",
-    endDate: "2024-10-30",
-    budget: "$320,000",
-    skills: ["Python", "TensorFlow", "React", "AWS"]
-  },
-  {
-    id: 4,
-    name: "IoT Management System",
-    client: "SmartTech Ltd.",
-    manager: "Lisa Wang",
-    status: "Completed",
-    progress: 100,
-    resourceCount: 12,
-    startDate: "2023-08-01",
-    endDate: "2024-02-28",
-    budget: "$450,000",
-    skills: ["Java", "Microservices", "Kubernetes", "React"]
-  },
-  {
-    id: 5,
-    name: "Blockchain Wallet",
-    client: "CryptoVenture",
-    manager: "John Martinez",
-    status: "On Hold",
-    progress: 30,
-    resourceCount: 4,
-    startDate: "2024-01-01",
-    endDate: "2024-09-30",
-    budget: "$200,000",
-    skills: ["Solidity", "Web3", "React", "Node.js"]
-  }
-];
+import { useDataSync } from "@/contexts/DataSyncContext";
+import { useNavigate } from "react-router-dom";
+import { useRBAC } from "@/hooks/useRBAC";
 
 const getStatusColor = (status: string) => {
-  switch (status) {
-    case "Active":
+  switch (status.toLowerCase()) {
+    case "in progress":
       return "bg-teal hover:bg-teal/90 text-white";
-    case "Planning":
+    case "planning":
       return "bg-deep-blue hover:bg-deep-blue/90 text-white";
-    case "Completed":
+    case "completed":
       return "bg-slate hover:bg-slate/90 text-white";
-    case "On Hold":
+    case "pending":
       return "bg-charcoal hover:bg-charcoal/90 text-white";
     default:
       return "bg-slate hover:bg-slate/90 text-white";
@@ -94,6 +29,23 @@ interface ProjectTableProps {
 }
 
 export const ProjectTable = ({ onProjectClick }: ProjectTableProps) => {
+  const { projects } = useDataSync();
+  const { hasPermission } = useRBAC();
+  const navigate = useNavigate();
+
+  const handleProjectClick = (project: any) => {
+    if (onProjectClick) {
+      onProjectClick(project);
+    } else {
+      // Navigate to project detail page
+      navigate(`/project-detail/${project.id}`);
+    }
+  };
+
+  const handleViewAllProjects = () => {
+    navigate('/resource-management/projects');
+  };
+
   return (
     <Card className="modern-card bg-white border-soft-silver/30 shadow-lg">
       <CardHeader className="bg-gradient-to-r from-deep-blue/5 to-teal/5 border-b border-soft-silver/20">
@@ -105,13 +57,13 @@ export const ProjectTable = ({ onProjectClick }: ProjectTableProps) => {
             Active Projects
           </span>
           <Badge variant="secondary" className="ml-auto bg-light-bg text-deep-blue border border-soft-silver/30">
-            {mockProjects.length} total
+            {projects.length} total
           </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <div className="space-y-4">
-          {mockProjects.map((project, index) => (
+          {projects.slice(0, 5).map((project, index) => (
             <motion.div
               key={project.id}
               initial={{ opacity: 0, y: 20 }}
@@ -119,7 +71,7 @@ export const ProjectTable = ({ onProjectClick }: ProjectTableProps) => {
               transition={{ delay: index * 0.1 }}
               whileHover={{ scale: 1.02, y: -2 }}
               className="p-4 bg-light-bg rounded-xl border border-soft-silver/40 hover:border-teal/40 cursor-pointer transition-all duration-300 hover:shadow-lg"
-              onClick={() => onProjectClick?.(project)}
+              onClick={() => handleProjectClick(project)}
             >
               <div className="flex items-center justify-between mb-3">
                 <div>
@@ -127,7 +79,7 @@ export const ProjectTable = ({ onProjectClick }: ProjectTableProps) => {
                     {project.name}
                   </h4>
                   <p className="text-slate text-sm">
-                    {project.client} • {project.manager}
+                    {project.client} • {project.projectManager || 'No PM assigned'}
                   </p>
                 </div>
                 <Badge className={`${getStatusColor(project.status)} border-0`}>
@@ -138,16 +90,18 @@ export const ProjectTable = ({ onProjectClick }: ProjectTableProps) => {
               <div className="flex items-center gap-4 text-sm text-slate mb-3">
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4" />
-                  {project.resourceCount} resources
+                  {project.resources.length} resources
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  {new Date(project.endDate).toLocaleDateString()}
+                  {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'TBD'}
                 </div>
-                <div className="flex items-center gap-1">
-                  <TrendingUp className="h-4 w-4" />
-                  {project.budget}
-                </div>
+                {hasPermission('canViewFinancialData') && (
+                  <div className="flex items-center gap-1">
+                    <TrendingUp className="h-4 w-4" />
+                    ${project.budget.toLocaleString()}
+                  </div>
+                )}
               </div>
               
               <div className="mb-3">
@@ -164,14 +118,14 @@ export const ProjectTable = ({ onProjectClick }: ProjectTableProps) => {
               </div>
               
               <div className="flex flex-wrap gap-1">
-                {project.skills.slice(0, 3).map((skill, skillIndex) => (
-                  <Badge key={skillIndex} variant="outline" className="text-xs border-soft-silver text-deep-blue">
-                    {skill}
+                {project.technologies.slice(0, 3).map((tech, techIndex) => (
+                  <Badge key={techIndex} variant="outline" className="text-xs border-soft-silver text-deep-blue">
+                    {tech}
                   </Badge>
                 ))}
-                {project.skills.length > 3 && (
+                {project.technologies.length > 3 && (
                   <Badge variant="outline" className="text-xs border-soft-silver text-deep-blue">
-                    +{project.skills.length - 3} more
+                    +{project.technologies.length - 3} more
                   </Badge>
                 )}
               </div>
@@ -180,7 +134,12 @@ export const ProjectTable = ({ onProjectClick }: ProjectTableProps) => {
         </div>
         
         <div className="mt-6 text-center">
-          <Button variant="outline" size="sm" className="w-full modern-button text-white font-semibold">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full modern-button text-white font-semibold"
+            onClick={handleViewAllProjects}
+          >
             View All Projects
           </Button>
         </div>
