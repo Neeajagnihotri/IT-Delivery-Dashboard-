@@ -1,11 +1,11 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, User, Mail, Phone, MapPin, Calendar, Award, Star, Briefcase, MessageSquare, Clock, Target } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { EditResourceModal } from "../modals/EditResourceModal";
 
 // Mock data - in real app this would come from API
 const resourceDetails: Record<string, {
@@ -461,7 +461,8 @@ const resourceDetails: Record<string, {
 export const ResourceDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const resource = id ? resourceDetails[id] : undefined;
+  const [resource, setResource] = useState(id ? resourceDetails[id] : undefined);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   if (!resource) {
     return (
@@ -475,6 +476,14 @@ export const ResourceDetailPage = () => {
       </div>
     );
   }
+
+  const handleEditResource = (updatedResource: any) => {
+    setResource(updatedResource);
+    // In a real app, you would also update the global state or make an API call
+    if (id) {
+      resourceDetails[id] = updatedResource;
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -783,10 +792,21 @@ export const ResourceDetailPage = () => {
           <Button variant="outline" onClick={() => navigate(-1)}>
             Back
           </Button>
-          <Button style={{ backgroundColor: '#008080' }} className="text-white">
+          <Button 
+            onClick={() => setShowEditModal(true)}
+            style={{ backgroundColor: '#008080' }} 
+            className="text-white"
+          >
             Edit Profile
           </Button>
         </div>
+
+        <EditResourceModal
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          resource={resource}
+          onSave={handleEditResource}
+        />
       </div>
     </div>
   );
