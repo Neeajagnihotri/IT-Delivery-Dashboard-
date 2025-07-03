@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, FolderPlus, Save, X, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useDataSync } from "@/contexts/DataSyncContext";
 
 const availableSkills = [
   "React", "Node.js", "TypeScript", "JavaScript", "Python", "Java", "AWS", "Docker", 
@@ -28,6 +29,7 @@ interface FormErrors {
 export const AddProjectPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { addProject } = useDataSync();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState({
@@ -88,10 +90,27 @@ export const AddProjectPage = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      toast({
-        title: "Project Created Successfully",
-        description: `${formData.projectName} has been added to the system with ${formData.requiredSkills.length} required skills.`,
-      });
+      // Create new project using DataSync context
+      const newProject = {
+        name: formData.projectName,
+        client: formData.clientName,
+        status: "Planning",
+        priority: formData.priority || "Medium",
+        progress: 0,
+        budget: parseFloat(formData.budget) || 0,
+        spent: 0,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        description: formData.description,
+        projectManager: formData.engineeringManager,
+        teamLead: "",
+        technologies: formData.requiredSkills,
+        resources: [],
+        milestones: [],
+        deliverables: []
+      };
+
+      addProject(newProject);
       
       navigate('/resource-management');
     } catch (error) {
@@ -145,7 +164,7 @@ export const AddProjectPage = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-deep-blue mb-2">Add Project</h1>
-              <p className="text-slate">Create new project</p>
+              <p className="text-slate">Create new project with real-time synchronization</p>
             </div>
           </div>
           <Button
@@ -245,12 +264,18 @@ export const AddProjectPage = () => {
                     onChange={(e) => handleInputChange("endDate", e.target.value)}
                     className="border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
                   />
+                  {errors.endDate && (
+                    <div className="flex items-center gap-1 error-message">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.endDate}
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="budget" className="text-deep-blue font-medium">Project Budget</Label>
                   <Input 
                     id="budget" 
-                    type="text" 
+                    type="number" 
                     value={formData.budget}
                     onChange={(e) => handleInputChange("budget", e.target.value)}
                     placeholder="Enter budget amount" 

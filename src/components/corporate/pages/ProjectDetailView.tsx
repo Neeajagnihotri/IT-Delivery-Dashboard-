@@ -1,211 +1,27 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, DollarSign, Users, Target, TrendingUp, CheckCircle, AlertCircle } from "lucide-react";
+import { ArrowLeft, Calendar, DollarSign, Users, Target, TrendingUp, CheckCircle, AlertCircle, Edit } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
-
-// Mock project data - in real app this would come from API
-const projectDetails: Record<string, {
-  id: string;
-  name: string;
-  client: string;
-  status: string;
-  priority: string;
-  progress: number;
-  budget: number;
-  spent: number;
-  startDate: string;
-  endDate: string;
-  description: string;
-  projectManager: string;
-  teamLead: string;
-  resources: Array<{ name: string; role: string; allocation: string; }>;
-  milestones: Array<{ name: string; date: string; status: string; }>;
-  technologies: string[];
-  deliverables: Array<{ name: string; status: string; dueDate: string; }>;
-}> = {
-  "1": {
-    id: "1",
-    name: "Project Alpha",
-    client: "TechCorp Industries",
-    status: "In Progress",
-    priority: "High",
-    progress: 92,
-    budget: 450000,
-    spent: 414000,
-    startDate: "2024-01-15",
-    endDate: "2024-06-30",
-    description: "Complete development and deployment of Project Alpha with enhanced user experience, mobile responsiveness, and performance optimization.",
-    projectManager: "Sarah Johnson",
-    teamLead: "Michael Chen",
-    resources: [
-      { name: "Alex Rodriguez", role: "Frontend Developer", allocation: "100%" },
-      { name: "Emily Davis", role: "Backend Developer", allocation: "80%" },
-      { name: "James Wilson", role: "UI/UX Designer", allocation: "60%" },
-      { name: "Lisa Brown", role: "QA Engineer", allocation: "50%" }
-    ],
-    milestones: [
-      { name: "Requirements Analysis", date: "2024-02-01", status: "Completed" },
-      { name: "Design Phase", date: "2024-03-15", status: "Completed" },
-      { name: "Development Phase 1", date: "2024-05-01", status: "Completed" },
-      { name: "Development Phase 2", date: "2024-06-15", status: "In Progress" },
-      { name: "Testing & QA", date: "2024-07-01", status: "Pending" },
-      { name: "Deployment", date: "2024-07-30", status: "Pending" }
-    ],
-    technologies: ["React", "Node.js", "MongoDB", "AWS", "TypeScript"],
-    deliverables: [
-      { name: "Frontend Application", status: "In Progress", dueDate: "2024-06-30" },
-      { name: "Backend API", status: "Completed", dueDate: "2024-06-15" },
-      { name: "Database Design", status: "Completed", dueDate: "2024-03-30" },
-      { name: "Documentation", status: "In Progress", dueDate: "2024-07-15" }
-    ]
-  },
-  "2": {
-    id: "2",
-    name: "Beta Platform",
-    client: "InnovateCorp",
-    status: "In Progress",
-    priority: "Medium",
-    progress: 78,
-    budget: 280000,
-    spent: 218400,
-    startDate: "2024-01-01",
-    endDate: "2024-05-15",
-    description: "Development of Beta Platform with advanced analytics and user management features.",
-    projectManager: "Mike Chen",
-    teamLead: "Sarah Wilson",
-    resources: [
-      { name: "John Smith", role: "Full Stack Developer", allocation: "100%" },
-      { name: "Emma Johnson", role: "UI/UX Designer", allocation: "75%" },
-      { name: "Robert Lee", role: "DevOps Engineer", allocation: "50%" }
-    ],
-    milestones: [
-      { name: "Project Kickoff", date: "2024-01-15", status: "Completed" },
-      { name: "MVP Development", date: "2024-03-01", status: "Completed" },
-      { name: "Beta Testing", date: "2024-04-15", status: "In Progress" },
-      { name: "Production Release", date: "2024-05-15", status: "Pending" }
-    ],
-    technologies: ["Vue.js", "Python", "PostgreSQL", "Docker"],
-    deliverables: [
-      { name: "Web Application", status: "In Progress", dueDate: "2024-05-01" },
-      { name: "API Documentation", status: "Completed", dueDate: "2024-04-01" },
-      { name: "Testing Suite", status: "In Progress", dueDate: "2024-04-30" }
-    ]
-  },
-  "3": {
-    id: "3",
-    name: "Customer Portal",
-    client: "GlobalTech",
-    status: "In Progress",
-    priority: "High",
-    progress: 95,
-    budget: 150000,
-    spent: 142500,
-    startDate: "2024-02-01",
-    endDate: "2024-07-20",
-    description: "Customer portal development with self-service capabilities and advanced reporting features.",
-    projectManager: "Alex Rodriguez",
-    teamLead: "Jennifer Martinez",
-    resources: [
-      { name: "David Chen", role: "Frontend Developer", allocation: "100%" },
-      { name: "Maria Garcia", role: "Backend Developer", allocation: "80%" },
-      { name: "Tom Wilson", role: "QA Engineer", allocation: "60%" }
-    ],
-    milestones: [
-      { name: "Requirements Gathering", date: "2024-02-15", status: "Completed" },
-      { name: "UI/UX Design", date: "2024-03-01", status: "Completed" },
-      { name: "Development Phase", date: "2024-05-15", status: "Completed" },
-      { name: "Testing Phase", date: "2024-06-30", status: "In Progress" },
-      { name: "Deployment", date: "2024-07-20", status: "Pending" }
-    ],
-    technologies: ["React", "Express.js", "MySQL", "Redis"],
-    deliverables: [
-      { name: "Customer Dashboard", status: "Completed", dueDate: "2024-06-15" },
-      { name: "Reporting Module", status: "In Progress", dueDate: "2024-07-01" },
-      { name: "User Documentation", status: "In Progress", dueDate: "2024-07-15" }
-    ]
-  },
-  "4": {
-    id: "4",
-    name: "Data Migration",
-    client: "MegaCorp",
-    status: "Planning",
-    priority: "Low",
-    progress: 45,
-    budget: 320000,
-    spent: 144000,
-    startDate: "2024-03-01",
-    endDate: "2024-08-15",
-    description: "Large-scale data migration project with legacy system integration and data validation.",
-    projectManager: "Emily Davis",
-    teamLead: "Robert Johnson",
-    resources: [
-      { name: "Michael Brown", role: "Data Engineer", allocation: "100%" },
-      { name: "Sarah Lee", role: "Database Admin", allocation: "80%" },
-      { name: "Kevin Davis", role: "QA Engineer", allocation: "40%" }
-    ],
-    milestones: [
-      { name: "Data Assessment", date: "2024-03-15", status: "Completed" },
-      { name: "Migration Strategy", date: "2024-04-01", status: "In Progress" },
-      { name: "Pilot Migration", date: "2024-06-01", status: "Pending" },
-      { name: "Full Migration", date: "2024-07-15", status: "Pending" },
-      { name: "Validation & Testing", date: "2024-08-01", status: "Pending" }
-    ],
-    technologies: ["Python", "Apache Spark", "PostgreSQL", "MongoDB"],
-    deliverables: [
-      { name: "Migration Scripts", status: "In Progress", dueDate: "2024-05-30" },
-      { name: "Data Validation Tools", status: "Pending", dueDate: "2024-06-15" },
-      { name: "Migration Documentation", status: "Pending", dueDate: "2024-07-30" }
-    ]
-  },
-  "5": {
-    id: "5",
-    name: "E-commerce Platform",
-    client: "RetailTech",
-    status: "In Progress",
-    priority: "Medium",
-    progress: 85,
-    budget: 200000,
-    spent: 170000,
-    startDate: "2024-01-10",
-    endDate: "2024-03-30",
-    description: "Modern e-commerce platform with payment integration and inventory management.",
-    projectManager: "John Smith",
-    teamLead: "Lisa Anderson",
-    resources: [
-      { name: "Daniel Rodriguez", role: "Full Stack Developer", allocation: "100%" },
-      { name: "Amy Chen", role: "UI/UX Designer", allocation: "75%" },
-      { name: "James Miller", role: "DevOps Engineer", allocation: "50%" }
-    ],
-    milestones: [
-      { name: "Requirements Analysis", date: "2024-01-20", status: "Completed" },
-      { name: "Design & Prototyping", date: "2024-02-05", status: "Completed" },
-      { name: "Core Development", date: "2024-03-01", status: "Completed" },
-      { name: "Payment Integration", date: "2024-03-15", status: "In Progress" },
-      { name: "Testing & Launch", date: "2024-03-30", status: "Pending" }
-    ],
-    technologies: ["Next.js", "Node.js", "Stripe", "MongoDB"],
-    deliverables: [
-      { name: "E-commerce Frontend", status: "Completed", dueDate: "2024-03-01" },
-      { name: "Payment Gateway", status: "In Progress", dueDate: "2024-03-20" },
-      { name: "Admin Panel", status: "Completed", dueDate: "2024-03-10" }
-    ]
-  }
-};
+import { useDataSync } from "@/contexts/DataSyncContext";
+import { EditProjectModal } from "@/components/corporate/modals/EditProjectModal";
 
 export const ProjectDetailView = () => {
   const navigate = useNavigate();
   const { projectId, projectName } = useParams();
+  const { projects, getProjectById } = useDataSync();
+  const [showEditModal, setShowEditModal] = useState(false);
   
-  // Find project by ID or name
+  // Find project by ID or name using DataSync context
   let project = undefined;
   if (projectId) {
-    project = projectDetails[projectId];
+    project = getProjectById(projectId);
   } else if (projectName) {
     // Find project by name
-    project = Object.values(projectDetails).find(p => 
+    project = projects.find(p => 
       p.name.toLowerCase().replace(/\s+/g, '-') === projectName.toLowerCase()
     );
   }
@@ -227,6 +43,7 @@ export const ProjectDetailView = () => {
     switch (status.toLowerCase()) {
       case 'completed': return 'bg-teal text-white';
       case 'in progress': return 'bg-deep-blue text-white';
+      case 'planning': return 'bg-slate text-white';
       case 'pending': return 'bg-slate text-white';
       default: return 'bg-charcoal text-white';
     }
@@ -252,17 +69,26 @@ export const ProjectDetailView = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-deep-blue mb-2">{project.name}</h1>
-              <p className="text-slate">Comprehensive project overview and management</p>
+              <p className="text-slate">Real-time synchronized project overview</p>
             </div>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => navigate('/active-projects')}
-            className="border-slate text-deep-blue hover:bg-light-bg"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Projects
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setShowEditModal(true)}
+              className="bg-teal hover:bg-teal/90 text-white"
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Project
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/active-projects')}
+              className="border-slate text-deep-blue hover:bg-light-bg"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Projects
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -287,14 +113,14 @@ export const ProjectDetailView = () => {
                     <div>
                       <p className="text-sm font-medium text-deep-blue">Duration</p>
                       <p className="text-sm text-slate">
-                        {new Date(project.startDate).toLocaleDateString()} - {new Date(project.endDate).toLocaleDateString()}
+                        {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'TBD'} - {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'TBD'}
                       </p>
                     </div>
                   </div>
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-deep-blue mb-2">Description</h4>
-                  <p className="text-sm text-slate">{project.description}</p>
+                  <p className="text-sm text-slate">{project.description || 'No description available'}</p>
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-deep-blue mb-2">Technologies</h4>
@@ -316,20 +142,24 @@ export const ProjectDetailView = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {project.resources.map((resource, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-light-bg rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Users className="h-5 w-5 text-teal" />
-                        <div>
-                          <p className="font-medium text-deep-blue">{resource.name}</p>
-                          <p className="text-sm text-slate">{resource.role}</p>
+                  {project.resources.length > 0 ? (
+                    project.resources.map((resource, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-light-bg rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Users className="h-5 w-5 text-teal" />
+                          <div>
+                            <p className="font-medium text-deep-blue">{resource.name}</p>
+                            <p className="text-sm text-slate">{resource.role}</p>
+                          </div>
                         </div>
+                        <Badge className="bg-deep-blue/10 text-deep-blue border-deep-blue/20">
+                          {resource.allocation}
+                        </Badge>
                       </div>
-                      <Badge className="bg-deep-blue/10 text-deep-blue border-deep-blue/20">
-                        {resource.allocation}
-                      </Badge>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-slate text-center py-4">No resources assigned yet</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -341,26 +171,30 @@ export const ProjectDetailView = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {project.milestones.map((milestone, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-light-bg rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        {milestone.status === 'Completed' ? (
-                          <CheckCircle className="h-5 w-5 text-teal" />
-                        ) : milestone.status === 'In Progress' ? (
-                          <AlertCircle className="h-5 w-5 text-deep-blue" />
-                        ) : (
-                          <Calendar className="h-5 w-5 text-slate" />
-                        )}
-                        <div>
-                          <p className="font-medium text-deep-blue">{milestone.name}</p>
-                          <p className="text-sm text-slate">{new Date(milestone.date).toLocaleDateString()}</p>
+                  {project.milestones.length > 0 ? (
+                    project.milestones.map((milestone, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-light-bg rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          {milestone.status === 'Completed' ? (
+                            <CheckCircle className="h-5 w-5 text-teal" />
+                          ) : milestone.status === 'In Progress' ? (
+                            <AlertCircle className="h-5 w-5 text-deep-blue" />
+                          ) : (
+                            <Calendar className="h-5 w-5 text-slate" />
+                          )}
+                          <div>
+                            <p className="font-medium text-deep-blue">{milestone.name}</p>
+                            <p className="text-sm text-slate">{new Date(milestone.date).toLocaleDateString()}</p>
+                          </div>
                         </div>
+                        <Badge className={getStatusColor(milestone.status)}>
+                          {milestone.status}
+                        </Badge>
                       </div>
-                      <Badge className={getStatusColor(milestone.status)}>
-                        {milestone.status}
-                      </Badge>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-slate text-center py-4">No milestones defined yet</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -396,11 +230,11 @@ export const ProjectDetailView = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-slate">PM:</span>
-                      <span className="text-sm font-medium text-deep-blue">{project.projectManager}</span>
+                      <span className="text-sm font-medium text-deep-blue">{project.projectManager || 'Not assigned'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-slate">Tech Lead:</span>
-                      <span className="text-sm font-medium text-deep-blue">{project.teamLead}</span>
+                      <span className="text-sm font-medium text-deep-blue">{project.teamLead || 'Not assigned'}</span>
                     </div>
                   </div>
                 </div>
@@ -430,7 +264,7 @@ export const ProjectDetailView = () => {
                 </div>
                 <Progress value={(project.spent / project.budget) * 100} className="mt-2" />
                 <p className="text-xs text-slate text-center">
-                  {((project.spent / project.budget) * 100).toFixed(1)}% of budget utilized
+                  {project.budget > 0 ? ((project.spent / project.budget) * 100).toFixed(1) : 0}% of budget utilized
                 </p>
               </CardContent>
             </Card>
@@ -442,22 +276,33 @@ export const ProjectDetailView = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {project.deliverables.map((deliverable, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-light-bg rounded">
-                      <div>
-                        <p className="text-sm font-medium text-deep-blue">{deliverable.name}</p>
-                        <p className="text-xs text-slate">Due: {new Date(deliverable.dueDate).toLocaleDateString()}</p>
+                  {project.deliverables.length > 0 ? (
+                    project.deliverables.map((deliverable, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-light-bg rounded">
+                        <div>
+                          <p className="text-sm font-medium text-deep-blue">{deliverable.name}</p>
+                          <p className="text-xs text-slate">Due: {new Date(deliverable.dueDate).toLocaleDateString()}</p>
+                        </div>
+                        <Badge className={getStatusColor(deliverable.status)} variant="outline">
+                          {deliverable.status}
+                        </Badge>
                       </div>
-                      <Badge className={getStatusColor(deliverable.status)} variant="outline">
-                        {deliverable.status}
-                      </Badge>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-slate text-center py-4">No deliverables defined yet</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
+
+        {/* Edit Project Modal */}
+        <EditProjectModal 
+          open={showEditModal}
+          onOpenChange={setShowEditModal}
+          project={project}
+        />
       </div>
     </div>
   );
