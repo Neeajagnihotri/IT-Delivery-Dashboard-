@@ -23,7 +23,7 @@ export const ZapmindsResourcesExportModal: React.FC<ZapmindsResourcesExportModal
 }) => {
   const handleDownloadPDF = () => {
     console.log('Downloading Zapminds Resources PDF report...');
-    alert('PDF download functionality will be implemented with a PDF library');
+    // PDF generation logic would go here with a PDF library
   };
 
   return (

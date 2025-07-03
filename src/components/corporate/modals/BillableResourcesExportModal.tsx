@@ -23,9 +23,8 @@ export const BillableResourcesExportModal: React.FC<BillableResourcesExportModal
   data
 }) => {
   const handleDownloadPDF = () => {
-    // PDF generation logic would go here
     console.log('Downloading Billable Resources PDF report...');
-    alert('PDF download functionality will be implemented with a PDF library');
+    // PDF generation logic would go here with a PDF library
   };
 
   return (
