@@ -4,12 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building, ArrowLeft, Users, Calendar, Award, Search, Filter, Download } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { InternalResourcesExportModal } from "../modals/InternalResourcesExportModal";
 
 const internalData = [
   { name: 'Operations', count: 5, color: '#22356F' },
@@ -28,18 +26,12 @@ const internalResources = [
 export const InternalResourcesKPIDetail = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  const uniqueDepartments = Array.from(new Set(internalResources.map(resource => resource.department)));
-
-  const filteredResources = internalResources.filter(resource => {
-    const matchesSearch = resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resource.department.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = selectedDepartment === "all" || resource.department === selectedDepartment;
-    return matchesSearch && matchesDepartment;
-  });
+  const filteredResources = internalResources.filter(resource =>
+    resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    resource.department.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const avgProjects = Math.round(internalResources.reduce((sum, resource) => sum + resource.projects, 0) / internalResources.length);
 
@@ -162,22 +154,11 @@ export const InternalResourcesKPIDetail = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                  <SelectTrigger className="w-48 border-slate text-slate">
-                    <Filter className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Filter by Department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Departments</SelectItem>
-                    {uniqueDepartments.map(department => (
-                      <SelectItem key={department} value={department}>{department}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button 
-                  className="bg-teal hover:bg-teal/90 text-white"
-                  onClick={() => setIsExportModalOpen(true)}
-                >
+                <Button variant="outline" className="border-slate text-slate hover:bg-slate/5">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filter by Department
+                </Button>
+                <Button className="bg-teal hover:bg-teal/90 text-white">
                   <Download className="h-4 w-4 mr-2" />
                   Export Internal Report
                 </Button>
@@ -247,11 +228,6 @@ export const InternalResourcesKPIDetail = () => {
           </CardContent>
         </Card>
       </div>
-
-      <InternalResourcesExportModal 
-        isOpen={isExportModalOpen}
-        onClose={() => setIsExportModalOpen(false)}
-      />
     </div>
   );
 };
