@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, User, Mail, Phone, MapPin, Calendar, Award, Star, Briefcase } from "lucide-react";
+import { ArrowLeft, User, Mail, Phone, MapPin, Calendar, Award, Star, Briefcase, MessageSquare, Clock, Target } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // Mock data - in real app this would come from API
@@ -27,6 +27,23 @@ const resourceDetails: Record<string, {
     startDate: string;
     client: string;
     role: string;
+  }>;
+  upcomingEngagements: Array<{
+    project: string;
+    client: string;
+    startDate: string;
+    endDate: string;
+    role: string;
+    status: string;
+  }>;
+  performanceFeedback: Array<{
+    reviewer: string;
+    period: string;
+    rating: number;
+    feedback: string;
+    strengths: string[];
+    improvementAreas: string[];
+    goals: string[];
   }>;
   utilizationRate: number;
   projectSuccessRate: number;
@@ -61,6 +78,44 @@ const resourceDetails: Record<string, {
         role: 'Providing technical consultation and code reviews'
       }
     ],
+    upcomingEngagements: [
+      {
+        project: 'AI Analytics Platform',
+        client: 'DataTech Solutions',
+        startDate: 'Aug 1, 2024',
+        endDate: 'Dec 15, 2024',
+        role: 'Senior Full Stack Developer',
+        status: 'Confirmed'
+      },
+      {
+        project: 'Cloud Migration Project',
+        client: 'Enterprise Corp',
+        startDate: 'Oct 1, 2024',
+        endDate: 'Jan 30, 2025',
+        role: 'Technical Lead',
+        status: 'Tentative'
+      }
+    ],
+    performanceFeedback: [
+      {
+        reviewer: 'Sarah Johnson (Project Manager)',
+        period: 'Q1 2024',
+        rating: 4.5,
+        feedback: 'John consistently delivers high-quality code and shows excellent problem-solving skills. His ability to mentor junior developers is particularly noteworthy.',
+        strengths: ['Technical expertise', 'Leadership skills', 'Code quality', 'Mentoring abilities'],
+        improvementAreas: ['Documentation', 'Time estimation'],
+        goals: ['Lead a major project', 'Improve documentation practices', 'Enhance estimation accuracy']
+      },
+      {
+        reviewer: 'Mike Chen (Tech Lead)',
+        period: 'Q4 2023',
+        rating: 4.3,
+        feedback: 'Strong technical contributor with good collaboration skills. Consistently meets deadlines and produces clean, maintainable code.',
+        strengths: ['Problem solving', 'Code quality', 'Reliability', 'Team collaboration'],
+        improvementAreas: ['Public speaking', 'Process improvement'],
+        goals: ['Present at tech conferences', 'Contribute to process optimization', 'Expand cloud skills']
+      }
+    ],
     utilizationRate: 85,
     projectSuccessRate: 92,
     performanceRating: 4.5
@@ -87,6 +142,27 @@ const resourceDetails: Record<string, {
         role: 'Lead UX designer for mobile interface design'
       }
     ],
+    upcomingEngagements: [
+      {
+        project: 'Healthcare Portal Redesign',
+        client: 'MedTech Inc',
+        startDate: 'Jul 15, 2024',
+        endDate: 'Nov 30, 2024',
+        role: 'Senior UX Designer',
+        status: 'Confirmed'
+      }
+    ],
+    performanceFeedback: [
+      {
+        reviewer: 'Alex Rodriguez (Design Director)',
+        period: 'Q1 2024',
+        rating: 4.2,
+        feedback: 'Jane brings creative solutions and user-centered thinking to every project. Her design processes are thorough and well-documented.',
+        strengths: ['User research', 'Design thinking', 'Attention to detail', 'Client communication'],
+        improvementAreas: ['Prototyping speed', 'Cross-platform design'],
+        goals: ['Master advanced prototyping tools', 'Lead design system creation', 'Mentor junior designers']
+      }
+    ],
     utilizationRate: 90,
     projectSuccessRate: 88,
     performanceRating: 4.2
@@ -105,6 +181,27 @@ const resourceDetails: Record<string, {
     employeeId: 'EMP0003',
     skills: ['AWS', 'Docker', 'Kubernetes'],
     currentProjects: [],
+    upcomingEngagements: [
+      {
+        project: 'Infrastructure Modernization',
+        client: 'TechStart LLC',
+        startDate: 'Aug 15, 2024',
+        endDate: 'Dec 31, 2024',
+        role: 'DevOps Lead',
+        status: 'Pipeline'
+      }
+    ],
+    performanceFeedback: [
+      {
+        reviewer: 'Emily Davis (Engineering Manager)',
+        period: 'Q1 2024',
+        rating: 4.7,
+        feedback: 'Mike is an outstanding DevOps engineer with deep expertise in cloud infrastructure. His automation scripts have significantly improved our deployment efficiency.',
+        strengths: ['Infrastructure automation', 'Cloud expertise', 'Problem solving', 'Innovation'],
+        improvementAreas: ['Documentation', 'Knowledge sharing'],
+        goals: ['Develop internal training materials', 'Implement advanced monitoring', 'Obtain AWS certifications']
+      }
+    ],
     utilizationRate: 0,
     projectSuccessRate: 95,
     performanceRating: 4.7
@@ -129,6 +226,27 @@ const resourceDetails: Record<string, {
         startDate: 'Feb 1, 2024',
         client: 'Internal',
         role: 'Shadow developer learning advanced React patterns'
+      }
+    ],
+    upcomingEngagements: [
+      {
+        project: 'E-learning Platform',
+        client: 'EduTech Solutions',
+        startDate: 'Sep 1, 2024',
+        endDate: 'Jan 15, 2025',
+        role: 'Junior Frontend Developer',
+        status: 'Confirmed'
+      }
+    ],
+    performanceFeedback: [
+      {
+        reviewer: 'John Smith (Senior Developer)',
+        period: 'Q1 2024',
+        rating: 3.8,
+        feedback: 'Sarah shows great enthusiasm for learning and has made significant progress. Her coding skills are improving rapidly with mentorship.',
+        strengths: ['Learning agility', 'Attention to detail', 'Positive attitude', 'Collaboration'],
+        improvementAreas: ['Technical depth', 'Independent problem solving'],
+        goals: ['Complete advanced React certification', 'Lead a small feature development', 'Improve debugging skills']
       }
     ],
     utilizationRate: 60,
@@ -162,6 +280,27 @@ const resourceDetails: Record<string, {
         startDate: 'Jan 10, 2024',
         client: 'TechFlow',
         role: 'Lead backend developer for microservices architecture'
+      }
+    ],
+    upcomingEngagements: [
+      {
+        project: 'Blockchain Integration',
+        client: 'CryptoTech Inc',
+        startDate: 'Sep 15, 2024',
+        endDate: 'Feb 28, 2025',
+        role: 'Senior Backend Developer',
+        status: 'Confirmed'
+      }
+    ],
+    performanceFeedback: [
+      {
+        reviewer: 'Lisa Anderson (Tech Lead)',
+        period: 'Q1 2024',
+        rating: 4.6,
+        feedback: 'David is a highly skilled backend developer with excellent architectural thinking. His API designs are robust and scalable.',
+        strengths: ['System architecture', 'API design', 'Performance optimization', 'Technical leadership'],
+        improvementAreas: ['Frontend skills', 'Agile practices'],
+        goals: ['Learn modern frontend frameworks', 'Become certified Scrum Master', 'Contribute to open source projects']
       }
     ],
     utilizationRate: 95,
@@ -198,6 +337,15 @@ export const ResourceDetailPage = () => {
         return { bg: '#22356F', text: 'Shadow' };
       default:
         return { bg: '#374B4F', text: status };
+    }
+  };
+
+  const getEngagementStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'confirmed': return 'bg-teal text-white';
+      case 'tentative': return 'bg-deep-blue text-white';
+      case 'pipeline': return 'bg-slate text-white';
+      default: return 'bg-charcoal text-white';
     }
   };
 
@@ -303,6 +451,41 @@ export const ResourceDetailPage = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Upcoming Engagements */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2" style={{ color: '#22356F' }}>
+                  <Clock className="h-5 w-5" />
+                  Upcoming Engagements
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {resource.upcomingEngagements.length > 0 ? (
+                  <div className="space-y-4">
+                    {resource.upcomingEngagements.map((engagement, index) => (
+                      <div key={index} className="border border-slate-200 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold" style={{ color: '#22356F' }}>{engagement.project}</h4>
+                          <Badge className={getEngagementStatusColor(engagement.status)}>
+                            {engagement.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-slate-600 mb-2">{engagement.role}</p>
+                        <div className="flex items-center space-x-4 text-xs text-slate-500">
+                          <span>Client: {engagement.client}</span>
+                          <span>Duration: {engagement.startDate} - {engagement.endDate}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-slate-500">
+                    <p>No upcoming engagements scheduled</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Right Column */}
@@ -337,6 +520,74 @@ export const ResourceDetailPage = () => {
                       />
                     ))}
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Performance Feedback */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2" style={{ color: '#22356F' }}>
+                  <MessageSquare className="h-5 w-5" />
+                  Performance Feedback
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {resource.performanceFeedback.map((feedback, index) => (
+                    <div key={index} className="border border-slate-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <h4 className="font-semibold text-sm" style={{ color: '#22356F' }}>{feedback.reviewer}</h4>
+                          <p className="text-xs text-slate-500">{feedback.period}</p>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`h-3 w-3 ${star <= feedback.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-sm text-slate-600 mb-3">{feedback.feedback}</p>
+                      
+                      <div className="space-y-2">
+                        <div>
+                          <h5 className="text-xs font-medium text-slate-700 mb-1">Strengths:</h5>
+                          <div className="flex flex-wrap gap-1">
+                            {feedback.strengths.map((strength, idx) => (
+                              <Badge key={idx} variant="outline" className="text-xs border-teal text-teal">
+                                {strength}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h5 className="text-xs font-medium text-slate-700 mb-1">Areas for Improvement:</h5>
+                          <div className="flex flex-wrap gap-1">
+                            {feedback.improvementAreas.map((area, idx) => (
+                              <Badge key={idx} variant="outline" className="text-xs border-amber-500 text-amber-600">
+                                {area}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h5 className="text-xs font-medium text-slate-700 mb-1">Goals:</h5>
+                          <div className="flex flex-wrap gap-1">
+                            {feedback.goals.map((goal, idx) => (
+                              <Badge key={idx} variant="outline" className="text-xs border-deep-blue text-deep-blue">
+                                {goal}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

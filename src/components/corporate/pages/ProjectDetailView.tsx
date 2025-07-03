@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -94,13 +93,122 @@ const projectDetails: Record<string, {
       { name: "API Documentation", status: "Completed", dueDate: "2024-04-01" },
       { name: "Testing Suite", status: "In Progress", dueDate: "2024-04-30" }
     ]
+  },
+  "3": {
+    id: "3",
+    name: "Customer Portal",
+    client: "GlobalTech",
+    status: "In Progress",
+    priority: "High",
+    progress: 95,
+    budget: 150000,
+    spent: 142500,
+    startDate: "2024-02-01",
+    endDate: "2024-07-20",
+    description: "Customer portal development with self-service capabilities and advanced reporting features.",
+    projectManager: "Alex Rodriguez",
+    teamLead: "Jennifer Martinez",
+    resources: [
+      { name: "David Chen", role: "Frontend Developer", allocation: "100%" },
+      { name: "Maria Garcia", role: "Backend Developer", allocation: "80%" },
+      { name: "Tom Wilson", role: "QA Engineer", allocation: "60%" }
+    ],
+    milestones: [
+      { name: "Requirements Gathering", date: "2024-02-15", status: "Completed" },
+      { name: "UI/UX Design", date: "2024-03-01", status: "Completed" },
+      { name: "Development Phase", date: "2024-05-15", status: "Completed" },
+      { name: "Testing Phase", date: "2024-06-30", status: "In Progress" },
+      { name: "Deployment", date: "2024-07-20", status: "Pending" }
+    ],
+    technologies: ["React", "Express.js", "MySQL", "Redis"],
+    deliverables: [
+      { name: "Customer Dashboard", status: "Completed", dueDate: "2024-06-15" },
+      { name: "Reporting Module", status: "In Progress", dueDate: "2024-07-01" },
+      { name: "User Documentation", status: "In Progress", dueDate: "2024-07-15" }
+    ]
+  },
+  "4": {
+    id: "4",
+    name: "Data Migration",
+    client: "MegaCorp",
+    status: "Planning",
+    priority: "Low",
+    progress: 45,
+    budget: 320000,
+    spent: 144000,
+    startDate: "2024-03-01",
+    endDate: "2024-08-15",
+    description: "Large-scale data migration project with legacy system integration and data validation.",
+    projectManager: "Emily Davis",
+    teamLead: "Robert Johnson",
+    resources: [
+      { name: "Michael Brown", role: "Data Engineer", allocation: "100%" },
+      { name: "Sarah Lee", role: "Database Admin", allocation: "80%" },
+      { name: "Kevin Davis", role: "QA Engineer", allocation: "40%" }
+    ],
+    milestones: [
+      { name: "Data Assessment", date: "2024-03-15", status: "Completed" },
+      { name: "Migration Strategy", date: "2024-04-01", status: "In Progress" },
+      { name: "Pilot Migration", date: "2024-06-01", status: "Pending" },
+      { name: "Full Migration", date: "2024-07-15", status: "Pending" },
+      { name: "Validation & Testing", date: "2024-08-01", status: "Pending" }
+    ],
+    technologies: ["Python", "Apache Spark", "PostgreSQL", "MongoDB"],
+    deliverables: [
+      { name: "Migration Scripts", status: "In Progress", dueDate: "2024-05-30" },
+      { name: "Data Validation Tools", status: "Pending", dueDate: "2024-06-15" },
+      { name: "Migration Documentation", status: "Pending", dueDate: "2024-07-30" }
+    ]
+  },
+  "5": {
+    id: "5",
+    name: "E-commerce Platform",
+    client: "RetailTech",
+    status: "In Progress",
+    priority: "Medium",
+    progress: 85,
+    budget: 200000,
+    spent: 170000,
+    startDate: "2024-01-10",
+    endDate: "2024-03-30",
+    description: "Modern e-commerce platform with payment integration and inventory management.",
+    projectManager: "John Smith",
+    teamLead: "Lisa Anderson",
+    resources: [
+      { name: "Daniel Rodriguez", role: "Full Stack Developer", allocation: "100%" },
+      { name: "Amy Chen", role: "UI/UX Designer", allocation: "75%" },
+      { name: "James Miller", role: "DevOps Engineer", allocation: "50%" }
+    ],
+    milestones: [
+      { name: "Requirements Analysis", date: "2024-01-20", status: "Completed" },
+      { name: "Design & Prototyping", date: "2024-02-05", status: "Completed" },
+      { name: "Core Development", date: "2024-03-01", status: "Completed" },
+      { name: "Payment Integration", date: "2024-03-15", status: "In Progress" },
+      { name: "Testing & Launch", date: "2024-03-30", status: "Pending" }
+    ],
+    technologies: ["Next.js", "Node.js", "Stripe", "MongoDB"],
+    deliverables: [
+      { name: "E-commerce Frontend", status: "Completed", dueDate: "2024-03-01" },
+      { name: "Payment Gateway", status: "In Progress", dueDate: "2024-03-20" },
+      { name: "Admin Panel", status: "Completed", dueDate: "2024-03-10" }
+    ]
   }
 };
 
 export const ProjectDetailView = () => {
   const navigate = useNavigate();
-  const { projectId } = useParams();
-  const project = projectId ? projectDetails[projectId] : undefined;
+  const { projectId, projectName } = useParams();
+  
+  // Find project by ID or name
+  let project = undefined;
+  if (projectId) {
+    project = projectDetails[projectId];
+  } else if (projectName) {
+    // Find project by name
+    project = Object.values(projectDetails).find(p => 
+      p.name.toLowerCase().replace(/\s+/g, '-') === projectName.toLowerCase()
+    );
+  }
 
   if (!project) {
     return (
