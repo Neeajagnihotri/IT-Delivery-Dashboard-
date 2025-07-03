@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +7,7 @@ import { Users, ArrowLeft, MapPin, Eye, Search, Filter, Download } from "lucide-
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ResourceExportModal } from "../modals/ResourceExportModal";
 
 const locationData = [
   { name: 'India', count: 145, color: '#22356F', cities: ['Bangalore', 'Hyderabad'] },
@@ -37,9 +37,14 @@ export const TotalResourcesKPIDetail = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const handleViewDetails = (resourceId: number) => {
     navigate(`/resource-detail/${resourceId}`);
+  };
+
+  const handleExportData = () => {
+    setIsExportModalOpen(true);
   };
 
   // Filter resources based on search term
@@ -149,7 +154,11 @@ export const TotalResourcesKPIDetail = () => {
                   <Filter className="h-4 w-4 mr-2" />
                   Advanced Filters
                 </Button>
-                <Button className="text-white hover:bg-opacity-90" style={{ backgroundColor: '#008080' }}>
+                <Button 
+                  onClick={handleExportData}
+                  className="text-white hover:bg-opacity-90" 
+                  style={{ backgroundColor: '#008080' }}
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export Data
                 </Button>
@@ -237,6 +246,11 @@ export const TotalResourcesKPIDetail = () => {
           );
         })}
       </div>
+
+      <ResourceExportModal 
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+      />
     </div>
   );
 };
