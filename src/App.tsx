@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import Dashboard from './components/dashboard/Dashboard';
-import LoginPage from './components/authentication/LoginPage';
-import PrivateRoute from './components/authentication/PrivateRoute';
+import { AuthProvider } from './components/auth/AuthContext';
+import { Dashboard } from './components/dashboard/Dashboard';
+import LoginPage from './components/auth/Login';
+import PrivateRoute from './components/auth/ProtectedRoute';
 import CorporateStructurePage from './components/corporate/pages/CorporateStructurePage';
 import ResourceManagementPage from './components/corporate/pages/ResourceManagementPage';
 import { AddResourcePage } from './components/corporate/pages/AddResourcePage';
