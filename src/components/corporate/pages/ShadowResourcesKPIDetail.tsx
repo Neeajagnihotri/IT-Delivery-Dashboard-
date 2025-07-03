@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +28,7 @@ const shadowResources = [
 export const ShadowResourcesKPIDetail = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPhase, setSelectedPhase] = useState<string>("");
+  const [selectedPhase, setSelectedPhase] = useState<string>("all");
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const uniquePhases = Array.from(new Set(shadowResources.map(resource => resource.status)));
@@ -36,7 +37,7 @@ export const ShadowResourcesKPIDetail = () => {
     const matchesSearch = resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          resource.mentor.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPhase = selectedPhase === "" || resource.status === selectedPhase;
+    const matchesPhase = selectedPhase === "all" || resource.status === selectedPhase;
     return matchesSearch && matchesPhase;
   });
 
@@ -49,7 +50,6 @@ export const ShadowResourcesKPIDetail = () => {
 
   const handleUpdateProgress = (resourceId: number) => {
     console.log('Opening progress update for resource:', resourceId);
-    // For now, we'll show an alert - this could be replaced with a modal later
     alert(`Update progress for resource ID: ${resourceId}. This functionality will open a progress update modal.`);
   };
 
@@ -178,7 +178,7 @@ export const ShadowResourcesKPIDetail = () => {
                     <SelectValue placeholder="Filter by Phase" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Phases</SelectItem>
+                    <SelectItem value="all">All Phases</SelectItem>
                     {uniquePhases.map(phase => (
                       <SelectItem key={phase} value={phase}>{phase}</SelectItem>
                     ))}
