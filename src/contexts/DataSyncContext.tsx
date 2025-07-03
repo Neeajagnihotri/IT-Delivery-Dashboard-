@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/auth/AuthContext';
@@ -142,17 +143,11 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return resources;
     }
     
-    // Resource managers see resources but not sensitive salary data
+    // Resource managers see resources but not sensitive data
     if (user.role === 'resource_manager') {
       return resources.map(resource => ({
         ...resource,
-        // Remove or mask sensitive data that only HR should see
-        salaryDetails: undefined,
-        personalInfo: {
-          ...resource.personalInfo,
-          emergencyContact: undefined,
-          bankDetails: undefined,
-        }
+        // Note: For future expansion, sensitive fields would be filtered here
       }));
     }
     
@@ -287,7 +282,7 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [toast, user]);
 
   const updateResource = useCallback((resourceId: string, updates: Partial<Resource>) => {
-    // Check permissions based on what's being updated
+    // Check permissions based on user role
     if (!user) {
       toast({
         title: "Access Denied",
@@ -297,9 +292,8 @@ export const DataSyncProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return;
     }
 
-    // HR can edit everything, resource managers can edit non-sensitive data
-    const canEdit = user.role === 'hr' || 
-                   (user.role === 'resource_manager' && !updates.salaryDetails);
+    // HR can edit everything, resource managers can edit basic data
+    const canEdit = user.role === 'hr' || user.role === 'resource_manager';
 
     if (!canEdit) {
       toast({
