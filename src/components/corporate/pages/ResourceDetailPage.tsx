@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -85,14 +86,6 @@ const resourceDetails: Record<string, {
         endDate: 'Dec 15, 2024',
         role: 'Senior Full Stack Developer',
         status: 'Confirmed'
-      },
-      {
-        project: 'Cloud Migration Project',
-        client: 'Enterprise Corp',
-        startDate: 'Oct 1, 2024',
-        endDate: 'Jan 30, 2025',
-        role: 'Technical Lead',
-        status: 'Tentative'
       }
     ],
     performanceFeedback: [
@@ -100,19 +93,10 @@ const resourceDetails: Record<string, {
         reviewer: 'Sarah Johnson (Project Manager)',
         period: 'Q1 2024',
         rating: 4.5,
-        feedback: 'John consistently delivers high-quality code and shows excellent problem-solving skills. His ability to mentor junior developers is particularly noteworthy.',
-        strengths: ['Technical expertise', 'Leadership skills', 'Code quality', 'Mentoring abilities'],
+        feedback: 'John consistently delivers high-quality code and shows excellent problem-solving skills.',
+        strengths: ['Technical expertise', 'Leadership skills', 'Code quality'],
         improvementAreas: ['Documentation', 'Time estimation'],
-        goals: ['Lead a major project', 'Improve documentation practices', 'Enhance estimation accuracy']
-      },
-      {
-        reviewer: 'Mike Chen (Tech Lead)',
-        period: 'Q4 2023',
-        rating: 4.3,
-        feedback: 'Strong technical contributor with good collaboration skills. Consistently meets deadlines and produces clean, maintainable code.',
-        strengths: ['Problem solving', 'Code quality', 'Reliability', 'Team collaboration'],
-        improvementAreas: ['Public speaking', 'Process improvement'],
-        goals: ['Present at tech conferences', 'Contribute to process optimization', 'Expand cloud skills']
+        goals: ['Lead a major project', 'Improve documentation practices']
       }
     ],
     utilizationRate: 85,
@@ -156,10 +140,10 @@ const resourceDetails: Record<string, {
         reviewer: 'Alex Rodriguez (Design Director)',
         period: 'Q1 2024',
         rating: 4.2,
-        feedback: 'Jane brings creative solutions and user-centered thinking to every project. Her design processes are thorough and well-documented.',
-        strengths: ['User research', 'Design thinking', 'Attention to detail', 'Client communication'],
+        feedback: 'Jane brings creative solutions and user-centered thinking to every project.',
+        strengths: ['User research', 'Design thinking', 'Attention to detail'],
         improvementAreas: ['Prototyping speed', 'Cross-platform design'],
-        goals: ['Master advanced prototyping tools', 'Lead design system creation', 'Mentor junior designers']
+        goals: ['Master advanced prototyping tools', 'Lead design system creation']
       }
     ],
     utilizationRate: 90,
@@ -195,10 +179,10 @@ const resourceDetails: Record<string, {
         reviewer: 'Emily Davis (Engineering Manager)',
         period: 'Q1 2024',
         rating: 4.7,
-        feedback: 'Mike is an outstanding DevOps engineer with deep expertise in cloud infrastructure. His automation scripts have significantly improved our deployment efficiency.',
-        strengths: ['Infrastructure automation', 'Cloud expertise', 'Problem solving', 'Innovation'],
+        feedback: 'Mike is an outstanding DevOps engineer with deep expertise in cloud infrastructure.',
+        strengths: ['Infrastructure automation', 'Cloud expertise', 'Problem solving'],
         improvementAreas: ['Documentation', 'Knowledge sharing'],
-        goals: ['Develop internal training materials', 'Implement advanced monitoring', 'Obtain AWS certifications']
+        goals: ['Develop internal training materials', 'Implement advanced monitoring']
       }
     ],
     utilizationRate: 0,
@@ -242,10 +226,10 @@ const resourceDetails: Record<string, {
         reviewer: 'John Smith (Senior Developer)',
         period: 'Q1 2024',
         rating: 3.8,
-        feedback: 'Sarah shows great enthusiasm for learning and has made significant progress. Her coding skills are improving rapidly with mentorship.',
-        strengths: ['Learning agility', 'Attention to detail', 'Positive attitude', 'Collaboration'],
+        feedback: 'Sarah shows great enthusiasm for learning and has made significant progress.',
+        strengths: ['Learning agility', 'Attention to detail', 'Positive attitude'],
         improvementAreas: ['Technical depth', 'Independent problem solving'],
-        goals: ['Complete advanced React certification', 'Lead a small feature development', 'Improve debugging skills']
+        goals: ['Complete advanced React certification', 'Lead a small feature development']
       }
     ],
     utilizationRate: 60,
@@ -272,13 +256,6 @@ const resourceDetails: Record<string, {
         startDate: 'Dec 1, 2023',
         client: 'DataCore',
         role: 'Backend architect for machine learning pipeline'
-      },
-      {
-        name: 'API Gateway Migration',
-        status: 'Active',
-        startDate: 'Jan 10, 2024',
-        client: 'TechFlow',
-        role: 'Lead backend developer for microservices architecture'
       }
     ],
     upcomingEngagements: [
@@ -296,10 +273,10 @@ const resourceDetails: Record<string, {
         reviewer: 'Lisa Anderson (Tech Lead)',
         period: 'Q1 2024',
         rating: 4.6,
-        feedback: 'David is a highly skilled backend developer with excellent architectural thinking. His API designs are robust and scalable.',
-        strengths: ['System architecture', 'API design', 'Performance optimization', 'Technical leadership'],
+        feedback: 'David is a highly skilled backend developer with excellent architectural thinking.',
+        strengths: ['System architecture', 'API design', 'Performance optimization'],
         improvementAreas: ['Frontend skills', 'Agile practices'],
-        goals: ['Learn modern frontend frameworks', 'Become certified Scrum Master', 'Contribute to open source projects']
+        goals: ['Learn modern frontend frameworks', 'Become certified Scrum Master']
       }
     ],
     utilizationRate: 95,

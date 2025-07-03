@@ -20,14 +20,16 @@ const resourcesByLocation = {
     { id: 1, name: 'Rajesh Kumar', role: 'Senior Developer', city: 'Bangalore', experience: '5+ years', status: 'Billable' },
     { id: 2, name: 'Priya Sharma', role: 'QA Lead', city: 'Hyderabad', experience: '4+ years', status: 'Billable' },
     { id: 3, name: 'Amit Singh', role: 'DevOps Engineer', city: 'Bangalore', experience: '3+ years', status: 'Benched' },
+    { id: 4, name: 'Sanjay Patel', role: 'Frontend Developer', city: 'Bangalore', experience: '2+ years', status: 'Billable' },
+    { id: 5, name: 'Kavitha Reddy', role: 'Backend Developer', city: 'Hyderabad', experience: '4+ years', status: 'Billable' },
   ],
   'US': [
-    { id: 4, name: 'John Smith', role: 'Architect', city: 'Texas', experience: '8+ years', status: 'Billable' },
-    { id: 5, name: 'Sarah Johnson', role: 'Project Manager', city: 'Texas', experience: '6+ years', status: 'Billable' },
+    { id: 6, name: 'John Smith', role: 'Architect', city: 'Texas', experience: '8+ years', status: 'Billable' },
+    { id: 7, name: 'Sarah Johnson', role: 'Project Manager', city: 'Texas', experience: '6+ years', status: 'Billable' },
   ],
   'Canada': [
-    { id: 6, name: 'Mike Chen', role: 'Full Stack Developer', city: 'Toronto', experience: '4+ years', status: 'Billable' },
-    { id: 7, name: 'Lisa Wang', role: 'UI/UX Designer', city: 'Vancouver', experience: '3+ years', status: 'Benched' },
+    { id: 8, name: 'Mike Chen', role: 'Full Stack Developer', city: 'Toronto', experience: '4+ years', status: 'Billable' },
+    { id: 9, name: 'Lisa Wang', role: 'UI/UX Designer', city: 'Vancouver', experience: '3+ years', status: 'Benched' },
   ]
 };
 
@@ -38,6 +40,16 @@ export const TotalResourcesKPIDetail = () => {
 
   const handleViewDetails = (resourceId: number) => {
     navigate(`/resource-detail/${resourceId}`);
+  };
+
+  // Filter resources based on search term
+  const getFilteredResources = (resources: any[]) => {
+    if (!searchTerm) return resources;
+    return resources.filter(resource =>
+      resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      resource.city.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   };
 
   return (
@@ -118,83 +130,14 @@ export const TotalResourcesKPIDetail = () => {
           </CardContent>
         </Card>
 
-        {/* Location-based Resource Lists */}
-        {locationData.map((location) => (
-          <Card key={location.name} className="bg-white rounded-2xl shadow-lg border-2 mb-6" style={{ borderColor: '#22356F20' }}>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2" style={{ color: '#22356F' }}>
-                <MapPin className="h-5 w-5" />
-                <span>{location.name} - {location.count} Resources</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="font-semibold" style={{ color: '#22356F' }}>Employee</TableHead>
-                      <TableHead className="font-semibold" style={{ color: '#22356F' }}>Role</TableHead>
-                      <TableHead className="font-semibold" style={{ color: '#22356F' }}>City</TableHead>
-                      <TableHead className="font-semibold" style={{ color: '#22356F' }}>Experience</TableHead>
-                      <TableHead className="font-semibold" style={{ color: '#22356F' }}>Status</TableHead>
-                      <TableHead className="font-semibold" style={{ color: '#22356F' }}>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {resourcesByLocation[location.name as keyof typeof resourcesByLocation]?.map((resource) => (
-                      <TableRow key={resource.id} className="hover:bg-opacity-50" style={{ backgroundColor: '#F5F7FA' }}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg" style={{ backgroundColor: '#22356F20',color: '#22356F' }}>
-                              <Users className="h-4 w-4" />
-                            </div>
-                            <div className="font-medium" style={{ color: '#22356F' }}>{resource.name}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell style={{ color: '#374B4F' }}>{resource.role}</TableCell>
-                        <TableCell style={{ color: '#374B4F' }}>{resource.city}</TableCell>
-                        <TableCell style={{ color: '#374B4F' }}>{resource.experience}</TableCell>
-                        <TableCell>
-                          <Badge className={`border-2 ${
-                            resource.status === 'Billable' 
-                              ? 'text-white border-transparent' 
-                              : 'border-transparent'
-                          }`} style={{ 
-                            backgroundColor: resource.status === 'Billable' ? '#008080' : '#374B4F',
-                            color: 'white'
-                          }}>
-                            {resource.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => handleViewDetails(resource.id)}
-                            className="border-2 hover:bg-opacity-90"
-                            style={{ borderColor: '#22356F', color: '#22356F' }}
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-
-        {/* Export Options */}
-        <Card className="bg-white rounded-2xl shadow-lg border-2" style={{ borderColor: '#22356F20' }}>
+        {/* Search and Export Options - Moved to top of India resources */}
+        <Card className="bg-white rounded-2xl shadow-lg border-2 mb-6" style={{ borderColor: '#22356F20' }}>
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-3 h-4 w-4" style={{ color: '#374B4F' }} />
                 <Input
-                  placeholder="Search resources..."
+                  placeholder="Search resources by name, role, or city..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 border-2"
@@ -214,6 +157,85 @@ export const TotalResourcesKPIDetail = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Location-based Resource Lists */}
+        {locationData.map((location) => {
+          const filteredResources = getFilteredResources(resourcesByLocation[location.name as keyof typeof resourcesByLocation] || []);
+          
+          return (
+            <Card key={location.name} className="bg-white rounded-2xl shadow-lg border-2 mb-6" style={{ borderColor: '#22356F20' }}>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2" style={{ color: '#22356F' }}>
+                  <MapPin className="h-5 w-5" />
+                  <span>{location.name} - {filteredResources.length} Resources {searchTerm && `(filtered from ${location.count})`}</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {filteredResources.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="font-semibold" style={{ color: '#22356F' }}>Employee</TableHead>
+                          <TableHead className="font-semibold" style={{ color: '#22356F' }}>Role</TableHead>
+                          <TableHead className="font-semibold" style={{ color: '#22356F' }}>City</TableHead>
+                          <TableHead className="font-semibold" style={{ color: '#22356F' }}>Experience</TableHead>
+                          <TableHead className="font-semibold" style={{ color: '#22356F' }}>Status</TableHead>
+                          <TableHead className="font-semibold" style={{ color: '#22356F' }}>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredResources.map((resource) => (
+                          <TableRow key={resource.id} className="hover:bg-opacity-50" style={{ backgroundColor: '#F5F7FA' }}>
+                            <TableCell>
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg" style={{ backgroundColor: '#22356F20',color: '#22356F' }}>
+                                  <Users className="h-4 w-4" />
+                                </div>
+                                <div className="font-medium" style={{ color: '#22356F' }}>{resource.name}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell style={{ color: '#374B4F' }}>{resource.role}</TableCell>
+                            <TableCell style={{ color: '#374B4F' }}>{resource.city}</TableCell>
+                            <TableCell style={{ color: '#374B4F' }}>{resource.experience}</TableCell>
+                            <TableCell>
+                              <Badge className={`border-2 ${
+                                resource.status === 'Billable' 
+                                  ? 'text-white border-transparent' 
+                                  : 'border-transparent'
+                              }`} style={{ 
+                                backgroundColor: resource.status === 'Billable' ? '#008080' : '#374B4F',
+                                color: 'white'
+                              }}>
+                                {resource.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => handleViewDetails(resource.id)}
+                                className="border-2 hover:bg-opacity-90"
+                                style={{ borderColor: '#22356F', color: '#22356F' }}
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                View Details
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-slate-500">
+                    <p>No resources found matching "{searchTerm}"</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
