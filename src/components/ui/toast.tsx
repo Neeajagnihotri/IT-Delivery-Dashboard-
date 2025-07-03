@@ -31,7 +31,7 @@ const toastVariants = cva(
         default: "border bg-background text-foreground",
         destructive: "border-[#E21A1B] bg-[#E21A1B] text-white",
         success: "border-[#4ACA17] bg-[#4ACA17] text-white",
-        warning: "border-[#F9CC17] bg-[#F9CC17] text-white",
+        warning: "border-[#F9CC17] bg-[#F9CC17] text-black",
       },
     },
     defaultVariants: {
@@ -77,14 +77,14 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 opacity-0 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 text-white/70 hover:text-white group-[.warning]:text-white/70 group-[.warning]:hover:text-white",
+      "absolute right-2 top-2 rounded-md p-1 opacity-0 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 text-white/70 hover:text-white group-[.warning]:text-black/70 group-[.warning]:hover:text-black",
       className
     )}
     toast-close=""
     {...props}
   >
     <X className="h-4 w-4" />
-  </ToastPrimitives.Close>
+  </ToastClose>
 ))
 ToastClose.displayName = ToastPrimitives.Close.displayName
 
@@ -94,7 +94,7 @@ const ToastTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Title
     ref={ref}
-    className={cn("text-sm font-semibold text-white", className)}
+    className={cn("text-sm font-semibold", className)}
     {...props}
   />
 ))
@@ -106,7 +106,7 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn("text-sm opacity-90 text-white", className)}
+    className={cn("text-sm opacity-90", className)}
     {...props}
   />
 ))
