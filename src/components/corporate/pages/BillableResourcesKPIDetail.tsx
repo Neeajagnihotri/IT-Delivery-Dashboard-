@@ -4,10 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UserCheck, ArrowLeft, DollarSign, TrendingUp, Calendar, Search, Filter, Download } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { BillableResourcesExportModal } from "../modals/BillableResourcesExportModal";
 
 const billableData = [
   { name: 'Client Projects', count: 160, percentage: 84.7, color: '#22356F' },
@@ -35,23 +37,33 @@ const billableResources = [
 export const BillableResourcesKPIDetail = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedClient, setSelectedClient] = useState("all");
+  const [showExportModal, setShowExportModal] = useState(false);
 
-  const filteredResources = billableResources.filter(resource =>
-    resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.client.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const clients = [...new Set(billableResources.map(resource => resource.client))];
 
-  const totalRevenue = billableResources.reduce((sum, resource) => sum + resource.revenue, 0);
-  const avgUtilization = Math.round(billableResources.reduce((sum, resource) => sum + resource.utilization, 0) / billableResources.length);
+  const filteredResources = billableResources.filter(resource => {
+    const matchesSearch = resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.client.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesClient = selectedClient === "all" || resource.client === selectedClient;
+    return matchesSearch && matchesClient;
+  });
+
+  const totalRevenue = filteredResources.reduce((sum, resource) => sum + resource.revenue, 0);
+  const avgUtilization = filteredResources.length > 0 ? 
+    Math.round(filteredResources.reduce((sum, resource) => sum + resource.utilization, 0) / filteredResources.length) : 0;
 
   const handleViewDetails = (resourceId: number) => {
     navigate(`/resource-detail/${resourceId}`);
   };
 
   const handleReallocate = (resourceId: number) => {
-    // Navigate to project allocation page with the resource pre-selected
     navigate(`/resource-management/project-allocation?resourceId=${resourceId}`);
+  };
+
+  const handleExportClick = () => {
+    setShowExportModal(true);
   };
 
   return (
@@ -83,7 +95,7 @@ export const BillableResourcesKPIDetail = () => {
           <Card className="bg-gradient-to-r from-teal to-deep-blue text-white rounded-2xl shadow-lg">
             <CardContent className="p-6 text-center">
               <UserCheck className="h-8 w-8 mx-auto mb-4" />
-              <div className="text-3xl font-bold mb-2">189</div>
+              <div className="text-3xl font-bold mb-2">{filteredResources.length}</div>
               <div className="text-sm opacity-90">Billable Resources</div>
             </CardContent>
           </Card>
@@ -173,11 +185,21 @@ export const BillableResourcesKPIDetail = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="border-slate text-slate hover:bg-slate/5">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter by Client
-                </Button>
-                <Button className="bg-teal hover:bg-teal/90 text-white">
+                <Select value={selectedClient} onValueChange={setSelectedClient}>
+                  <SelectTrigger className="w-[180px] border-slate text-slate">
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Filter by Client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Clients</SelectItem>
+                    {clients.map((client) => (
+                      <SelectItem key={client} value={client}>
+                        {client}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button onClick={handleExportClick} className="bg-teal hover:bg-teal/90 text-white">
                   <Download className="h-4 w-4 mr-2" />
                   Export Revenue Report
                 </Button>
@@ -260,6 +282,17 @@ export const BillableResourcesKPIDetail = () => {
             </div>
           </CardContent>
         </Card>
+
+        <BillableResourcesExportModal
+          isOpen={showExportModal}
+          onClose={() => setShowExportModal(false)}
+          data={{
+            totalRevenue,
+            totalResources: filteredResources.length,
+            avgUtilization,
+            selectedClient: selectedClient !== "all" ? selectedClient : undefined
+          }}
+        />
       </div>
     </div>
   );

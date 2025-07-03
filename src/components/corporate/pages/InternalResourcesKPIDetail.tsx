@@ -4,10 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building, ArrowLeft, Users, Calendar, Award, Search, Filter, Download } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { InternalResourcesExportModal } from "../modals/InternalResourcesExportModal";
 
 const internalData = [
   { name: 'Operations', count: 5, color: '#22356F' },
@@ -26,14 +28,25 @@ const internalResources = [
 export const InternalResourcesKPIDetail = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
+  const [showExportModal, setShowExportModal] = useState(false);
 
-  const filteredResources = internalResources.filter(resource =>
-    resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.department.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const departments = [...new Set(internalResources.map(resource => resource.department))];
 
-  const avgProjects = Math.round(internalResources.reduce((sum, resource) => sum + resource.projects, 0) / internalResources.length);
+  const filteredResources = internalResources.filter(resource => {
+    const matchesSearch = resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.department.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDepartment = selectedDepartment === "all" || resource.department === selectedDepartment;
+    return matchesSearch && matchesDepartment;
+  });
+
+  const avgProjects = filteredResources.length > 0 ? 
+    Math.round(filteredResources.reduce((sum, resource) => sum + resource.projects, 0) / filteredResources.length) : 0;
+
+  const handleExportClick = () => {
+    setShowExportModal(true);
+  };
 
   return (
     <div className="min-h-screen bg-light-bg p-6">
@@ -64,7 +77,7 @@ export const InternalResourcesKPIDetail = () => {
           <Card className="bg-gradient-to-r from-deep-blue to-teal text-white rounded-2xl shadow-lg">
             <CardContent className="p-6 text-center">
               <Building className="h-8 w-8 mx-auto mb-4" />
-              <div className="text-3xl font-bold mb-2">12</div>
+              <div className="text-3xl font-bold mb-2">{filteredResources.length}</div>
               <div className="text-sm opacity-90">Internal Resources</div>
             </CardContent>
           </Card>
@@ -127,7 +140,7 @@ export const InternalResourcesKPIDetail = () => {
             <CardContent>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={internalResources}>
+                  <BarChart data={filteredResources}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis dataKey="name" stroke="#374B4F" />
                     <YAxis stroke="#374B4F" />
@@ -154,11 +167,21 @@ export const InternalResourcesKPIDetail = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="border-slate text-slate hover:bg-slate/5">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter by Department
-                </Button>
-                <Button className="bg-teal hover:bg-teal/90 text-white">
+                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                  <SelectTrigger className="w-[180px] border-slate text-slate">
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Filter by Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Departments</SelectItem>
+                    {departments.map((department) => (
+                      <SelectItem key={department} value={department}>
+                        {department}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button onClick={handleExportClick} className="bg-teal hover:bg-teal/90 text-white">
                   <Download className="h-4 w-4 mr-2" />
                   Export Internal Report
                 </Button>
@@ -227,6 +250,16 @@ export const InternalResourcesKPIDetail = () => {
             </div>
           </CardContent>
         </Card>
+
+        <InternalResourcesExportModal
+          isOpen={showExportModal}
+          onClose={() => setShowExportModal(false)}
+          data={{
+            totalResources: filteredResources.length,
+            avgProjects,
+            selectedDepartment: selectedDepartment !== "all" ? selectedDepartment : undefined
+          }}
+        />
       </div>
     </div>
   );

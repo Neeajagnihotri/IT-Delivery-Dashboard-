@@ -4,10 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Brain, ArrowLeft, Star, Trophy, Calendar, Search, Filter, Download, Eye, Users } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Brain, ArrowLeft, Star, Trophy, Calendar, Search, Filter, Download, Eye } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ZapmindsResourcesExportModal } from "../modals/ZapmindsResourcesExportModal";
 
 const zapmindsProjects = [
   { name: 'AI Innovation Lab', count: 2, color: '#22356F' },
@@ -81,17 +83,28 @@ const zapmindsResources = [
 export const ZapmindsResourcesKPIDetail = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedProject, setSelectedProject] = useState("all");
+  const [showExportModal, setShowExportModal] = useState(false);
 
-  const filteredResources = zapmindsResources.filter(resource =>
-    resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    resource.project.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const projects = [...new Set(zapmindsResources.map(resource => resource.project))];
 
-  const avgRating = (zapmindsResources.reduce((sum, resource) => sum + resource.rating, 0) / zapmindsResources.length).toFixed(1);
+  const filteredResources = zapmindsResources.filter(resource => {
+    const matchesSearch = resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.project.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesProject = selectedProject === "all" || resource.project === selectedProject;
+    return matchesSearch && matchesProject;
+  });
+
+  const avgRating = filteredResources.length > 0 ? 
+    (filteredResources.reduce((sum, resource) => sum + resource.rating, 0) / filteredResources.length).toFixed(1) : "0.0";
 
   const handleViewDetails = (resourceId: number) => {
     navigate(`/resource-detail/${resourceId}`);
+  };
+
+  const handleExportClick = () => {
+    setShowExportModal(true);
   };
 
   return (
@@ -124,7 +137,7 @@ export const ZapmindsResourcesKPIDetail = () => {
           <Card className="text-white rounded-2xl shadow-lg" style={{ background: 'linear-gradient(135deg, #008080 0%, #22356F 100%)' }}>
             <CardContent className="p-6 text-center">
               <Brain className="h-8 w-8 mx-auto mb-4" />
-              <div className="text-3xl font-bold mb-2">6</div>
+              <div className="text-3xl font-bold mb-2">{filteredResources.length}</div>
               <div className="text-sm opacity-90">Assigned Resources</div>
             </CardContent>
           </Card>
@@ -187,7 +200,7 @@ export const ZapmindsResourcesKPIDetail = () => {
             <CardContent>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={zapmindsResources}>
+                  <BarChart data={filteredResources}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis dataKey="name" stroke="#374B4F" />
                     <YAxis stroke="#374B4F" />
@@ -215,11 +228,21 @@ export const ZapmindsResourcesKPIDetail = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="border-2 hover:bg-opacity-90" style={{ borderColor: '#374B4F', color: '#374B4F' }}>
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter by Project
-                </Button>
-                <Button className="text-white hover:bg-opacity-90" style={{ backgroundColor: '#008080' }}>
+                <Select value={selectedProject} onValueChange={setSelectedProject}>
+                  <SelectTrigger className="w-[180px] border-2" style={{ borderColor: '#374B4F', color: '#374B4F' }}>
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Filter by Project" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Projects</SelectItem>
+                    {projects.map((project) => (
+                      <SelectItem key={project} value={project}>
+                        {project}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button onClick={handleExportClick} className="text-white hover:bg-opacity-90" style={{ backgroundColor: '#008080' }}>
                   <Download className="h-4 w-4 mr-2" />
                   Export Report
                 </Button>
@@ -292,6 +315,16 @@ export const ZapmindsResourcesKPIDetail = () => {
             </div>
           </CardContent>
         </Card>
+
+        <ZapmindsResourcesExportModal
+          isOpen={showExportModal}
+          onClose={() => setShowExportModal(false)}
+          data={{
+            totalResources: filteredResources.length,
+            avgRating,
+            selectedProject: selectedProject !== "all" ? selectedProject : undefined
+          }}
+        />
       </div>
     </div>
   );
