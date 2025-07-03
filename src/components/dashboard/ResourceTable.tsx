@@ -2,8 +2,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, TrendingUp, MapPin, Briefcase } from "lucide-react";
+import { Users, TrendingUp, MapPin, Briefcase, Eye } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const mockResources = [
   { id: 1, name: "John Smith", role: "Senior Developer", department: "Engineering", status: "billable", location: "New York", experience: "5+ years", skills: ["React", "Node.js", "TypeScript"] },
@@ -28,6 +29,13 @@ interface ResourceTableProps {
 }
 
 export const ResourceTable = ({ onResourceClick }: ResourceTableProps) => {
+  const navigate = useNavigate();
+
+  const handleViewDetails = (resource: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/resource-detail/${resource.id}`);
+  };
+
   return (
     <Card className="modern-card bg-white border-soft-silver/30 shadow-lg">
       <CardHeader className="bg-gradient-to-r from-deep-blue/5 to-teal/5 border-b border-soft-silver/20">
@@ -62,9 +70,19 @@ export const ResourceTable = ({ onResourceClick }: ResourceTableProps) => {
                     {resource.role}
                   </p>
                 </div>
-                <Badge className={`${getStatusColor(resource.status)} border-0 font-medium`}>
-                  {resource.status}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge className={`${getStatusColor(resource.status)} border-0 font-medium`}>
+                    {resource.status}
+                  </Badge>
+                  <Button
+                    size="sm"
+                    onClick={(e) => handleViewDetails(resource, e)}
+                    className="bg-deep-blue hover:bg-deep-blue/90 text-white"
+                  >
+                    <Eye className="h-4 w-4 mr-1" />
+                    View Details
+                  </Button>
+                </div>
               </div>
               
               <div className="flex items-center gap-6 text-sm text-slate mb-3">

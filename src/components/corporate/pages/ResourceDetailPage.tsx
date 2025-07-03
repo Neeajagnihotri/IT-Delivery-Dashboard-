@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -57,7 +56,7 @@ const resourceDetails: Record<string, {
     role: 'Senior Developer',
     department: 'Engineering',
     location: 'New York',
-    experience: '5+ years experience',
+    experience: '5+ years',
     joinDate: 'Jan 15, 2023',
     status: 'billable',
     employeeId: 'EMP0001',
@@ -128,7 +127,7 @@ const resourceDetails: Record<string, {
     role: 'UX Designer',
     department: 'Design',
     location: 'Remote',
-    experience: '3+ years experience',
+    experience: '3+ years',
     joinDate: 'Mar 10, 2023',
     status: 'billable',
     employeeId: 'EMP0002',
@@ -175,7 +174,7 @@ const resourceDetails: Record<string, {
     role: 'DevOps Engineer',
     department: 'Engineering',
     location: 'San Francisco',
-    experience: '4+ years experience',
+    experience: '4+ years',
     joinDate: 'Aug 5, 2022',
     status: 'benched',
     employeeId: 'EMP0003',
@@ -214,7 +213,7 @@ const resourceDetails: Record<string, {
     role: 'Frontend Developer',
     department: 'Engineering',
     location: 'Austin',
-    experience: '2+ years experience',
+    experience: '2+ years',
     joinDate: 'Nov 20, 2023',
     status: 'shadow',
     employeeId: 'EMP0004',
@@ -261,7 +260,7 @@ const resourceDetails: Record<string, {
     role: 'Backend Developer',
     department: 'Engineering',
     location: 'Seattle',
-    experience: '6+ years experience',
+    experience: '6+ years',
     joinDate: 'May 15, 2022',
     status: 'billable',
     employeeId: 'EMP0005',
