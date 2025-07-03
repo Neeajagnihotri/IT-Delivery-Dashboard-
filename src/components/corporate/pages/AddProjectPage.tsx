@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,12 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, FolderPlus, Save, X, AlertCircle, Plus } from "lucide-react";
+import { ArrowLeft, FolderPlus, Save, X, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { useProjects } from "@/contexts/ProjectContext";
 
-const availableTechnologies = [
+const availableSkills = [
   "React", "Node.js", "TypeScript", "JavaScript", "Python", "Java", "AWS", "Docker", 
   "Kubernetes", "PostgreSQL", "MongoDB", "GraphQL", "REST APIs", "Git", "Jenkins",
   "Angular", "Vue.js", "Express.js", "Spring Boot", "Django", "Flask", "Redis",
@@ -22,48 +20,28 @@ const availableTechnologies = [
 interface FormErrors {
   projectName?: string;
   clientName?: string;
-  technologies?: string;
+  requiredSkills?: string;
   startDate?: string;
   endDate?: string;
-  progress?: string;
-  budget?: string;
 }
 
 export const AddProjectPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { addProject } = useProjects();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState({
     projectName: "",
     clientName: "",
-    projectManager: "",
-    teamLead: "",
+    engineeringManager: "",
     priority: "",
-    status: "Planning",
-    progress: 0,
     startDate: "",
     endDate: "",
-    budget: 0,
-    spent: 0,
-    technologies: [] as string[],
-    description: "",
-    milestones: [
-      { name: "Project Initiation", date: "", status: "Pending" },
-      { name: "Requirements Analysis", date: "", status: "Pending" },
-      { name: "Design Phase", date: "", status: "Pending" },
-      { name: "Development", date: "", status: "Pending" },
-      { name: "Testing", date: "", status: "Pending" },
-      { name: "Deployment", date: "", status: "Pending" }
-    ],
-    deliverables: [
-      { name: "Project Documentation", status: "Pending", dueDate: "" },
-      { name: "Technical Architecture", status: "Pending", dueDate: "" },
-      { name: "Final Delivery", status: "Pending", dueDate: "" }
-    ]
+    budget: "",
+    requiredSkills: [] as string[],
+    description: ""
   });
-  const [technologyInput, setTechnologyInput] = useState("");
+  const [skillInput, setSkillInput] = useState("");
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -76,8 +54,8 @@ export const AddProjectPage = () => {
       newErrors.clientName = "Client name is required";
     }
 
-    if (formData.technologies.length === 0) {
-      newErrors.technologies = "At least one technology is required";
+    if (formData.requiredSkills.length === 0) {
+      newErrors.requiredSkills = "At least one skill is required";
     }
 
     if (formData.startDate && formData.endDate) {
@@ -86,14 +64,6 @@ export const AddProjectPage = () => {
       if (endDate <= startDate) {
         newErrors.endDate = "End date must be after start date";
       }
-    }
-
-    if (formData.progress < 0 || formData.progress > 100) {
-      newErrors.progress = "Progress must be between 0 and 100";
-    }
-
-    if (formData.budget < 0) {
-      newErrors.budget = "Budget must be a positive number";
     }
 
     setErrors(newErrors);
@@ -118,27 +88,11 @@ export const AddProjectPage = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      const projectData = {
-        name: formData.projectName,
-        client: formData.clientName,
-        status: formData.status,
-        priority: formData.priority,
-        progress: formData.progress,
-        budget: formData.budget,
-        spent: formData.spent,
-        remaining: formData.budget - formData.spent,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        description: formData.description,
-        projectManager: formData.projectManager,
-        teamLead: formData.teamLead,
-        technologies: formData.technologies,
-        resources: [],
-        milestones: formData.milestones,
-        deliverables: formData.deliverables
-      };
+      toast({
+        title: "Project Created Successfully",
+        description: `${formData.projectName} has been added to the system with ${formData.requiredSkills.length} required skills.`,
+      });
       
-      addProject(projectData);
       navigate('/resource-management');
     } catch (error) {
       toast({
@@ -151,30 +105,32 @@ export const AddProjectPage = () => {
     }
   };
 
-  const handleInputChange = (field: string, value: string | number) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
     if (errors[field as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
-  const addTechnology = (tech: string) => {
-    if (tech && !formData.technologies.includes(tech)) {
+  const addSkill = (skill: string) => {
+    if (skill && !formData.requiredSkills.includes(skill)) {
       setFormData(prev => ({
         ...prev,
-        technologies: [...prev.technologies, tech]
+        requiredSkills: [...prev.requiredSkills, skill]
       }));
-      setTechnologyInput("");
-      if (errors.technologies) {
-        setErrors(prev => ({ ...prev, technologies: undefined }));
+      setSkillInput("");
+      // Clear skills error when adding a skill
+      if (errors.requiredSkills) {
+        setErrors(prev => ({ ...prev, requiredSkills: undefined }));
       }
     }
   };
 
-  const removeTechnology = (techToRemove: string) => {
+  const removeSkill = (skillToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-      technologies: prev.technologies.filter(tech => tech !== techToRemove)
+      requiredSkills: prev.requiredSkills.filter(skill => skill !== skillToRemove)
     }));
   };
 
@@ -189,7 +145,7 @@ export const AddProjectPage = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-deep-blue mb-2">Add Project</h1>
-              <p className="text-slate">Create comprehensive project with all details</p>
+              <p className="text-slate">Create new project</p>
             </div>
           </div>
           <Button
@@ -203,7 +159,6 @@ export const AddProjectPage = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* Basic Project Information */}
           <Card className="bg-white rounded-2xl shadow-lg border border-deep-blue/20 mb-6">
             <CardHeader>
               <CardTitle className="text-deep-blue">Project Information</CardTitle>
@@ -220,7 +175,7 @@ export const AddProjectPage = () => {
                     className="border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
                   />
                   {errors.projectName && (
-                    <div className="flex items-center gap-1 text-red-500 text-sm">
+                    <div className="flex items-center gap-1 error-message">
                       <AlertCircle className="h-4 w-4" />
                       {errors.projectName}
                     </div>
@@ -237,44 +192,26 @@ export const AddProjectPage = () => {
                     className="border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
                   />
                   {errors.clientName && (
-                    <div className="flex items-center gap-1 text-red-500 text-sm">
+                    <div className="flex items-center gap-1 error-message">
                       <AlertCircle className="h-4 w-4" />
                       {errors.clientName}
                     </div>
                   )}
                 </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="projectManager" className="text-deep-blue font-medium">Project Manager</Label>
-                  <Select onValueChange={(value) => handleInputChange("projectManager", value)}>
+                  <Label htmlFor="engineeringManager" className="text-deep-blue font-medium">Engineering Manager</Label>
+                  <Select onValueChange={(value) => handleInputChange("engineeringManager", value)}>
                     <SelectTrigger className="border-slate/40 focus:border-teal focus:ring-teal/20 bg-white text-deep-blue">
-                      <SelectValue placeholder="Select project manager" />
+                      <SelectValue placeholder="Select engineering manager" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-slate/30 z-50">
-                      <SelectItem value="john-smith" className="text-deep-blue hover:bg-light-bg">John Smith</SelectItem>
-                      <SelectItem value="jane-doe" className="text-deep-blue hover:bg-light-bg">Jane Doe</SelectItem>
+                      <SelectItem value="john-doe" className="text-deep-blue hover:bg-light-bg">John Doe</SelectItem>
+                      <SelectItem value="jane-smith" className="text-deep-blue hover:bg-light-bg">Jane Smith</SelectItem>
                       <SelectItem value="mike-johnson" className="text-deep-blue hover:bg-light-bg">Mike Johnson</SelectItem>
                       <SelectItem value="sarah-wilson" className="text-deep-blue hover:bg-light-bg">Sarah Wilson</SelectItem>
-                      <SelectItem value="lisa-anderson" className="text-deep-blue hover:bg-light-bg">Lisa Anderson</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="teamLead" className="text-deep-blue font-medium">Tech Lead</Label>
-                  <Select onValueChange={(value) => handleInputChange("teamLead", value)}>
-                    <SelectTrigger className="border-slate/40 focus:border-teal focus:ring-teal/20 bg-white text-deep-blue">
-                      <SelectValue placeholder="Select tech lead" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-slate/30 z-50">
-                      <SelectItem value="alex-rodriguez" className="text-deep-blue hover:bg-light-bg">Alex Rodriguez</SelectItem>
-                      <SelectItem value="emily-davis" className="text-deep-blue hover:bg-light-bg">Emily Davis</SelectItem>
-                      <SelectItem value="daniel-rodriguez" className="text-deep-blue hover:bg-light-bg">Daniel Rodriguez</SelectItem>
-                      <SelectItem value="michael-chen" className="text-deep-blue hover:bg-light-bg">Michael Chen</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="priority" className="text-deep-blue font-medium">Priority</Label>
                   <Select onValueChange={(value) => handleInputChange("priority", value)}>
@@ -282,29 +219,13 @@ export const AddProjectPage = () => {
                       <SelectValue placeholder="Select priority" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-slate/30 z-50">
-                      <SelectItem value="Low" className="text-deep-blue hover:bg-light-bg">Low</SelectItem>
-                      <SelectItem value="Medium" className="text-deep-blue hover:bg-light-bg">Medium</SelectItem>
-                      <SelectItem value="High" className="text-deep-blue hover:bg-light-bg">High</SelectItem>
-                      <SelectItem value="Critical" className="text-deep-blue hover:bg-light-bg">Critical</SelectItem>
+                      <SelectItem value="high" className="text-deep-blue hover:bg-light-bg">High</SelectItem>
+                      <SelectItem value="medium" className="text-deep-blue hover:bg-light-bg">Medium</SelectItem>
+                      <SelectItem value="low" className="text-deep-blue hover:bg-light-bg">Low</SelectItem>
+                      <SelectItem value="critical" className="text-deep-blue hover:bg-light-bg">Critical</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status" className="text-deep-blue font-medium">Status</Label>
-                  <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
-                    <SelectTrigger className="border-slate/40 focus:border-teal focus:ring-teal/20 bg-white text-deep-blue">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-slate/30 z-50">
-                      <SelectItem value="Planning" className="text-deep-blue hover:bg-light-bg">Planning</SelectItem>
-                      <SelectItem value="In Progress" className="text-deep-blue hover:bg-light-bg">In Progress</SelectItem>
-                      <SelectItem value="On Hold" className="text-deep-blue hover:bg-light-bg">On Hold</SelectItem>
-                      <SelectItem value="Completed" className="text-deep-blue hover:bg-light-bg">Completed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="startDate" className="text-deep-blue font-medium">Start Date</Label>
                   <Input 
@@ -315,8 +236,7 @@ export const AddProjectPage = () => {
                     className="border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
                   />
                 </div>
-
-                <div className={`space-y-2 ${errors.endDate ? 'form-error' : ''}`}>
+                <div className="space-y-2">
                   <Label htmlFor="endDate" className="text-deep-blue font-medium">Expected End Date</Label>
                   <Input 
                     id="endDate" 
@@ -325,157 +245,93 @@ export const AddProjectPage = () => {
                     onChange={(e) => handleInputChange("endDate", e.target.value)}
                     className="border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
                   />
-                  {errors.endDate && (
-                    <div className="flex items-center gap-1 text-red-500 text-sm">
-                      <AlertCircle className="h-4 w-4" />
-                      {errors.endDate}
-                    </div>
-                  )}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Progress & Budget */}
-          <Card className="bg-white rounded-2xl shadow-lg border border-deep-blue/20 mb-6">
-            <CardHeader>
-              <CardTitle className="text-deep-blue">Progress & Budget</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className={`space-y-2 ${errors.progress ? 'form-error' : ''}`}>
-                  <Label htmlFor="progress" className="text-deep-blue font-medium">Current Progress (%)</Label>
-                  <Input 
-                    id="progress" 
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={formData.progress}
-                    onChange={(e) => handleInputChange("progress", Number(e.target.value))}
-                    placeholder="0" 
-                    className="border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
-                  />
-                  {errors.progress && (
-                    <div className="flex items-center gap-1 text-red-500 text-sm">
-                      <AlertCircle className="h-4 w-4" />
-                      {errors.progress}
-                    </div>
-                  )}
-                </div>
-
-                <div className={`space-y-2 ${errors.budget ? 'form-error' : ''}`}>
-                  <Label htmlFor="budget" className="text-deep-blue font-medium">Total Budget ($)</Label>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="budget" className="text-deep-blue font-medium">Project Budget</Label>
                   <Input 
                     id="budget" 
-                    type="number"
-                    min="0"
+                    type="text" 
                     value={formData.budget}
-                    onChange={(e) => handleInputChange("budget", Number(e.target.value))}
+                    onChange={(e) => handleInputChange("budget", e.target.value)}
                     placeholder="Enter budget amount" 
                     className="border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
                   />
-                  {errors.budget && (
-                    <div className="flex items-center gap-1 text-red-500 text-sm">
-                      <AlertCircle className="h-4 w-4" />
-                      {errors.budget}
+                </div>
+                
+                {/* Required Skills Section */}
+                <div className={`space-y-2 md:col-span-2 ${errors.requiredSkills ? 'form-error' : ''}`}>
+                  <Label className="text-deep-blue font-medium required">Required Skills</Label>
+                  <div className="space-y-3">
+                    <Select onValueChange={addSkill}>
+                      <SelectTrigger className="border-slate/40 focus:border-teal focus:ring-teal/20 bg-white text-deep-blue">
+                        <SelectValue placeholder="Select required skills" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border-slate/30 z-50">
+                        {availableSkills.filter(skill => !formData.requiredSkills.includes(skill)).map((skill) => (
+                          <SelectItem key={skill} value={skill} className="text-deep-blue hover:bg-light-bg">{skill}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    
+                    {/* Custom skill input */}
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Add custom skill"
+                        value={skillInput}
+                        onChange={(e) => setSkillInput(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            addSkill(skillInput);
+                          }
+                        }}
+                        className="border-slate/40 focus:border-teal focus:ring-teal/20 bg-white text-deep-blue"
+                      />
+                      <Button 
+                        type="button" 
+                        onClick={() => addSkill(skillInput)}
+                        variant="outline"
+                        size="sm"
+                        className="border-slate text-deep-blue hover:bg-light-bg"
+                      >
+                        Add
+                      </Button>
                     </div>
-                  )}
+                    
+                    {formData.requiredSkills.length > 0 && (
+                      <div className="flex flex-wrap gap-2 p-3 bg-light-bg rounded-lg border border-slate/30">
+                        {formData.requiredSkills.map((skill) => (
+                          <Badge key={skill} variant="secondary" className="flex items-center gap-1 bg-deep-blue text-white hover:bg-deep-blue/90">
+                            {skill}
+                            <X
+                              className="h-3 w-3 cursor-pointer hover:text-teal"
+                              onClick={() => removeSkill(skill)}
+                            />
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {errors.requiredSkills && (
+                      <div className="flex items-center gap-1 error-message">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.requiredSkills}
+                      </div>
+                    )}
+                  </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="spent" className="text-deep-blue font-medium">Amount Spent ($)</Label>
-                  <Input 
-                    id="spent" 
-                    type="number"
-                    min="0"
-                    value={formData.spent}
-                    onChange={(e) => handleInputChange("spent", Number(e.target.value))}
-                    placeholder="0" 
-                    className="border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
+                
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="description" className="text-deep-blue font-medium">Project Description</Label>
+                  <Textarea 
+                    id="description" 
+                    value={formData.description}
+                    onChange={(e) => handleInputChange("description", e.target.value)}
+                    placeholder="Enter detailed project description, objectives, and requirements..."
+                    className="min-h-[120px] border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Technologies */}
-          <Card className="bg-white rounded-2xl shadow-lg border border-deep-blue/20 mb-6">
-            <CardHeader>
-              <CardTitle className="text-deep-blue">Required Technologies</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className={`space-y-3 ${errors.technologies ? 'form-error' : ''}`}>
-                <Select onValueChange={addTechnology}>
-                  <SelectTrigger className="border-slate/40 focus:border-teal focus:ring-teal/20 bg-white text-deep-blue">
-                    <SelectValue placeholder="Select required technologies" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-slate/30 z-50">
-                    {availableTechnologies.filter(tech => !formData.technologies.includes(tech)).map((tech) => (
-                      <SelectItem key={tech} value={tech} className="text-deep-blue hover:bg-light-bg">{tech}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Add custom technology"
-                    value={technologyInput}
-                    onChange={(e) => setTechnologyInput(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addTechnology(technologyInput);
-                      }
-                    }}
-                    className="border-slate/40 focus:border-teal focus:ring-teal/20 bg-white text-deep-blue"
-                  />
-                  <Button 
-                    type="button" 
-                    onClick={() => addTechnology(technologyInput)}
-                    variant="outline"
-                    size="sm"
-                    className="border-slate text-deep-blue hover:bg-light-bg"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                {formData.technologies.length > 0 && (
-                  <div className="flex flex-wrap gap-2 p-3 bg-light-bg rounded-lg border border-slate/30">
-                    {formData.technologies.map((tech) => (
-                      <Badge key={tech} variant="secondary" className="flex items-center gap-1 bg-deep-blue text-white hover:bg-deep-blue/90">
-                        {tech}
-                        <X
-                          className="h-3 w-3 cursor-pointer hover:text-teal"
-                          onClick={() => removeTechnology(tech)}
-                        />
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                
-                {errors.technologies && (
-                  <div className="flex items-center gap-1 text-red-500 text-sm">
-                    <AlertCircle className="h-4 w-4" />
-                    {errors.technologies}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Project Description */}
-          <Card className="bg-white rounded-2xl shadow-lg border border-deep-blue/20 mb-6">
-            <CardHeader>
-              <CardTitle className="text-deep-blue">Project Description</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea 
-                value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
-                placeholder="Enter detailed project description, objectives, and requirements..."
-                className="min-h-[120px] border-slate/40 bg-white text-deep-blue focus:border-teal focus:ring-teal/20"
-              />
             </CardContent>
           </Card>
 
