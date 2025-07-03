@@ -123,7 +123,7 @@ export const CorporateHeader = ({ onSidebarToggle, user }: CorporateHeaderProps)
 
     let node;
     let matchCount = 0;
-    const matches: Element[] = [];
+    const matches: HTMLElement[] = [];
 
     // Create case-insensitive regex with word boundaries for better matching
     const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
@@ -151,7 +151,7 @@ export const CorporateHeader = ({ onSidebarToggle, user }: CorporateHeaderProps)
           
           // Collect all highlights from this replacement
           const newHighlights = parent.querySelectorAll('.search-highlight');
-          matches.push(...Array.from(newHighlights));
+          matches.push(...Array.from(newHighlights) as HTMLElement[]);
         }
       }
     }
@@ -165,8 +165,8 @@ export const CorporateHeader = ({ onSidebarToggle, user }: CorporateHeaderProps)
     }
   };
 
-  const scrollToMatch = (index: number, matches?: Element[]) => {
-    const highlights = matches || document.querySelectorAll('.search-highlight');
+  const scrollToMatch = (index: number, matches?: HTMLElement[]) => {
+    const highlights = matches || Array.from(document.querySelectorAll('.search-highlight')) as HTMLElement[];
     if (highlights[index]) {
       // Remove previous active highlight
       document.querySelectorAll('.search-highlight-active').forEach(el => {
