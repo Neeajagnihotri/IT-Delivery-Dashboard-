@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +28,7 @@ const internalResources = [
 export const InternalResourcesKPIDetail = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState<string>("");
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const uniqueDepartments = Array.from(new Set(internalResources.map(resource => resource.department)));
@@ -36,7 +37,7 @@ export const InternalResourcesKPIDetail = () => {
     const matchesSearch = resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          resource.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          resource.department.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = selectedDepartment === "" || resource.department === selectedDepartment;
+    const matchesDepartment = selectedDepartment === "all" || resource.department === selectedDepartment;
     return matchesSearch && matchesDepartment;
   });
 
@@ -167,7 +168,7 @@ export const InternalResourcesKPIDetail = () => {
                     <SelectValue placeholder="Filter by Department" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Departments</SelectItem>
+                    <SelectItem value="all">All Departments</SelectItem>
                     {uniqueDepartments.map(department => (
                       <SelectItem key={department} value={department}>{department}</SelectItem>
                     ))}
