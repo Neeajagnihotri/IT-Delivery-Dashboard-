@@ -92,7 +92,7 @@ export const ActiveProjectsDetail = () => {
   };
 
   const handleProjectClick = (projectId: number) => {
-    navigate(`/project-detail/${projectId}`);
+    navigate(`/project-detail-view/${projectId}`);
   };
 
   const getHealthBadge = (health: string) => {

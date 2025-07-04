@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,12 +37,38 @@ import { ResourceManagementModule } from "./modules/ResourceManagementModule";
 import { EscalationManagement } from "./modules/EscalationManagement";
 import { FinancialOverview } from "./modules/FinancialOverview";
 import { SettingsModal } from "./modals/SettingsModal";
+import { NotificationModal } from "../modals/NotificationModal";
 import { useToast } from "@/hooks/use-toast";
 
 export const UnifiedDashboard = () => {
   const { user, logout } = useAuth();
   const [activeModule, setActiveModule] = useState("overview");
   const [showSettings, setShowSettings] = useState(false);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [notifications, setNotifications] = useState([
+    {
+      id: '1',
+      title: 'Project Deadline Alert',
+      message: 'Project Alpha is approaching its deadline. Current progress is at 85% with 5 days remaining. Please review the timeline and resource allocation.',
+      type: 'warning',
+      timestamp: new Date().toISOString()
+    },
+    {
+      id: '2',
+      title: 'New Resource Request',
+      message: 'A new resource allocation request has been submitted for the Beta Platform project. Review required for approval.',
+      type: 'info',
+      timestamp: new Date(Date.now() - 3600000).toISOString()
+    },
+    {
+      id: '3',
+      title: 'Budget Threshold Exceeded',
+      message: 'Data Migration project has exceeded 90% of allocated budget. Immediate attention required.',
+      type: 'error',
+      timestamp: new Date(Date.now() - 7200000).toISOString()
+    }
+  ]);
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -57,7 +82,6 @@ export const UnifiedDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      // Mock comprehensive data - replace with actual API calls
       const mockData = {
         overview: {
           total_projects: 12,
@@ -155,6 +179,19 @@ export const UnifiedDashboard = () => {
     });
   };
 
+  const handleNotificationClick = (notification: any) => {
+    setSelectedNotification(notification);
+    setShowNotificationModal(true);
+  };
+
+  const handleDismissNotification = (notificationId: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    toast({
+      title: "Notification Dismissed",
+      description: "The notification has been removed from your list"
+    });
+  };
+
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case 'leadership': return 'default';
@@ -211,10 +248,55 @@ export const UnifiedDashboard = () => {
                 <Search className="h-4 w-4" />
               </Button>
               
-              <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 relative">
-                <Bell className="h-4 w-4" />
-                <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 relative">
+                    <Bell className="h-4 w-4" />
+                    {notifications.length > 0 && (
+                      <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+                        {notifications.length}
+                      </span>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80 bg-white border-soft-silver/30 shadow-lg">
+                  <div className="p-3 border-b border-soft-silver/20">
+                    <h3 className="font-semibold text-deep-blue">Notifications</h3>
+                  </div>
+                  {notifications.length > 0 ? (
+                    notifications.map((notification) => (
+                      <DropdownMenuItem
+                        key={notification.id}
+                        className="p-3 cursor-pointer hover:bg-light-bg focus:bg-light-bg"
+                        onClick={() => handleNotificationClick(notification)}
+                      >
+                        <div className="flex items-start gap-2 w-full">
+                          <div className={`w-2 h-2 rounded-full mt-2 ${
+                            notification.type === 'error' ? 'bg-red-500' :
+                            notification.type === 'warning' ? 'bg-amber-500' :
+                            notification.type === 'success' ? 'bg-teal' : 'bg-deep-blue'
+                          }`} />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-deep-blue text-sm truncate">
+                              {notification.title}
+                            </p>
+                            <p className="text-slate text-xs mt-1 line-clamp-2">
+                              {notification.message}
+                            </p>
+                            <p className="text-slate/70 text-xs mt-1">
+                              {new Date(notification.timestamp).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                      </DropdownMenuItem>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-slate text-sm">
+                      No new notifications
+                    </div>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               <Button
                 variant="outline"
@@ -503,6 +585,14 @@ export const UnifiedDashboard = () => {
       <SettingsModal 
         open={showSettings} 
         onOpenChange={setShowSettings} 
+      />
+
+      {/* Notification Modal */}
+      <NotificationModal
+        open={showNotificationModal}
+        onOpenChange={setShowNotificationModal}
+        notification={selectedNotification}
+        onDismiss={handleDismissNotification}
       />
     </div>
   );

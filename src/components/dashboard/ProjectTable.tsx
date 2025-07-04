@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -37,13 +36,13 @@ export const ProjectTable = ({ onProjectClick }: ProjectTableProps) => {
     if (onProjectClick) {
       onProjectClick(project);
     } else {
-      // Navigate to project detail page
-      navigate(`/project-detail/${project.id}`);
+      // Navigate to project detail view with project ID
+      navigate(`/project-detail-view/${project.id}`);
     }
   };
 
   const handleViewAllProjects = () => {
-    navigate('/resource-management/projects');
+    navigate('/active-projects');
   };
 
   return (
