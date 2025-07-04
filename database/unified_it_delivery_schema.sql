@@ -460,14 +460,14 @@ DECLARE
     total_days INTEGER;
 BEGIN
     -- Get project details
-    SELECT budget, start_date, end_date 
+    SELECT p.budget, p.start_date, p.end_date 
     INTO project_budget, project_start_date, project_end_date
-    FROM projects WHERE id = project_id_param;
+    FROM projects p WHERE p.id = project_id_param;
 
     -- Calculate budget health
     IF project_budget > 0 THEN
-        SELECT COALESCE(SUM(actual_hours), 0) INTO total_actual_hours
-        FROM deliverables WHERE project_id = project_id_param;
+        SELECT COALESCE(SUM(d.actual_hours), 0) INTO total_actual_hours
+        FROM deliverables d WHERE d.project_id = project_id_param;
         
         budget_health := LEAST(100, GREATEST(0, 100 - ((total_actual_hours * 75.0 / project_budget * 100) - 80) * 5));
     END IF;
@@ -486,9 +486,9 @@ BEGIN
     END IF;
 
     -- Calculate deliverable health
-    SELECT COUNT(*), COUNT(CASE WHEN status = 'Completed' THEN 1 END)
+    SELECT COUNT(*), COUNT(CASE WHEN d.status = 'Completed' THEN 1 END)
     INTO total_deliverables, completed_deliverables
-    FROM deliverables WHERE project_id = project_id_param;
+    FROM deliverables d WHERE d.project_id = project_id_param;
 
     IF total_deliverables > 0 THEN
         deliverable_health := (completed_deliverables * 100 / total_deliverables);
@@ -506,7 +506,7 @@ CREATE OR REPLACE FUNCTION update_project_health()
 RETURNS TRIGGER AS $$
 DECLARE
     target_project_id INTEGER;
-    health_score INTEGER;
+    calculated_health_score INTEGER;
     health_status_val VARCHAR(20);
     risk_level VARCHAR(20);
 BEGIN
@@ -518,13 +518,13 @@ BEGIN
     END IF;
 
     -- Calculate health score
-    health_score := calculate_project_health_score(target_project_id);
+    calculated_health_score := calculate_project_health_score(target_project_id);
 
     -- Determine status and risk
-    IF health_score >= 80 THEN
+    IF calculated_health_score >= 80 THEN
         health_status_val := 'Green';
         risk_level := 'Low';
-    ELSIF health_score >= 60 THEN
+    ELSIF calculated_health_score >= 60 THEN
         health_status_val := 'Yellow';
         risk_level := 'Medium';
     ELSE
@@ -534,11 +534,11 @@ BEGIN
 
     -- Update project (only if different to avoid unnecessary updates)
     UPDATE projects 
-    SET health_score = health_score,
+    SET health_score = calculated_health_score,
         health_status = health_status_val,
         delivery_risk = risk_level
     WHERE id = target_project_id 
-    AND (projects.health_score != health_score 
+    AND (projects.health_score != calculated_health_score 
          OR projects.health_status != health_status_val 
          OR projects.delivery_risk != risk_level);
 
