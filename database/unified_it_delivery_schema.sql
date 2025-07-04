@@ -442,78 +442,105 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Function to calculate project health score
-CREATE OR REPLACE FUNCTION calculate_project_health()
-RETURNS TRIGGER AS $$
+-- Simplified function to calculate project health score without recursion
+CREATE OR REPLACE FUNCTION calculate_project_health_score(project_id_param INTEGER)
+RETURNS INTEGER AS $$
 DECLARE
-    project_id_val INTEGER;
     budget_health INTEGER := 100;
     timeline_health INTEGER := 100;
     deliverable_health INTEGER := 100;
     final_score INTEGER;
-    health_status_val VARCHAR(20);
+    project_budget DECIMAL(15,2);
+    project_start_date DATE;
+    project_end_date DATE;
+    total_actual_hours INTEGER;
+    total_deliverables INTEGER;
+    completed_deliverables INTEGER;
+    days_elapsed INTEGER;
+    total_days INTEGER;
 BEGIN
-    -- Get project ID from the trigger
-    IF TG_TABLE_NAME = 'projects' THEN
-        project_id_val := COALESCE(NEW.id, OLD.id);
-    ELSIF TG_TABLE_NAME = 'deliverables' THEN
-        project_id_val := COALESCE(NEW.project_id, OLD.project_id);
+    -- Get project details
+    SELECT budget, start_date, end_date 
+    INTO project_budget, project_start_date, project_end_date
+    FROM projects WHERE id = project_id_param;
+
+    -- Calculate budget health
+    IF project_budget > 0 THEN
+        SELECT COALESCE(SUM(actual_hours), 0) INTO total_actual_hours
+        FROM deliverables WHERE project_id = project_id_param;
+        
+        budget_health := LEAST(100, GREATEST(0, 100 - ((total_actual_hours * 75.0 / project_budget * 100) - 80) * 5));
+    END IF;
+
+    -- Calculate timeline health
+    IF project_end_date IS NOT NULL THEN
+        IF CURRENT_DATE > project_end_date THEN
+            timeline_health := 0;
+        ELSIF CURRENT_DATE > project_start_date THEN
+            days_elapsed := CURRENT_DATE - project_start_date;
+            total_days := project_end_date - project_start_date;
+            IF total_days > 0 THEN
+                timeline_health := GREATEST(0, 100 - ((days_elapsed * 100 / total_days) - 50) * 2);
+            END IF;
+        END IF;
+    END IF;
+
+    -- Calculate deliverable health
+    SELECT COUNT(*), COUNT(CASE WHEN status = 'Completed' THEN 1 END)
+    INTO total_deliverables, completed_deliverables
+    FROM deliverables WHERE project_id = project_id_param;
+
+    IF total_deliverables > 0 THEN
+        deliverable_health := (completed_deliverables * 100 / total_deliverables);
+    END IF;
+
+    -- Calculate final weighted score
+    final_score := (budget_health * 0.3 + timeline_health * 0.4 + deliverable_health * 0.3)::INTEGER;
+
+    RETURN final_score;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to update project health without causing recursion
+CREATE OR REPLACE FUNCTION update_project_health()
+RETURNS TRIGGER AS $$
+DECLARE
+    target_project_id INTEGER;
+    health_score INTEGER;
+    health_status_val VARCHAR(20);
+    risk_level VARCHAR(20);
+BEGIN
+    -- Determine which project to update
+    IF TG_TABLE_NAME = 'deliverables' THEN
+        target_project_id := COALESCE(NEW.project_id, OLD.project_id);
     ELSE
         RETURN COALESCE(NEW, OLD);
     END IF;
 
-    -- Calculate budget health (if budget exists)
-    SELECT CASE 
-        WHEN budget > 0 THEN
-            LEAST(100, GREATEST(0, 100 - ((
-                COALESCE((SELECT SUM(actual_hours * 75) FROM deliverables WHERE project_id = project_id_val), 0)
-                / budget) * 100 - 80) * 5))
-        ELSE 100
-    END INTO budget_health
-    FROM projects WHERE id = project_id_val;
+    -- Calculate health score
+    health_score := calculate_project_health_score(target_project_id);
 
-    -- Calculate timeline health using proper PostgreSQL date arithmetic
-    SELECT CASE 
-        WHEN end_date IS NOT NULL THEN
-            CASE 
-                WHEN CURRENT_DATE > end_date THEN 0
-                WHEN CURRENT_DATE > start_date THEN
-                    GREATEST(0, 100 - ((CURRENT_DATE - start_date) * 100 / 
-                    GREATEST(1, end_date - start_date) - 50) * 2)
-                ELSE 100
-            END
-        ELSE 100
-    END INTO timeline_health
-    FROM projects WHERE id = project_id_val;
+    -- Determine status and risk
+    IF health_score >= 80 THEN
+        health_status_val := 'Green';
+        risk_level := 'Low';
+    ELSIF health_score >= 60 THEN
+        health_status_val := 'Yellow';
+        risk_level := 'Medium';
+    ELSE
+        health_status_val := 'Red';
+        risk_level := 'High';
+    END IF;
 
-    -- Calculate deliverable health
-    SELECT CASE 
-        WHEN COUNT(*) > 0 THEN
-            (COUNT(CASE WHEN status = 'Completed' THEN 1 END)::DECIMAL / COUNT(*) * 100)::INTEGER
-        ELSE 100
-    END INTO deliverable_health
-    FROM deliverables WHERE project_id = project_id_val;
-
-    -- Calculate final score (weighted average)
-    final_score := (budget_health * 0.3 + timeline_health * 0.4 + deliverable_health * 0.3)::INTEGER;
-
-    -- Determine health status
-    health_status_val := CASE 
-        WHEN final_score >= 80 THEN 'Green'
-        WHEN final_score >= 60 THEN 'Yellow'
-        ELSE 'Red'
-    END;
-
-    -- Update project health
+    -- Update project (only if different to avoid unnecessary updates)
     UPDATE projects 
-    SET health_score = final_score,
+    SET health_score = health_score,
         health_status = health_status_val,
-        delivery_risk = CASE 
-            WHEN final_score >= 80 THEN 'Low'
-            WHEN final_score >= 60 THEN 'Medium'
-            ELSE 'High'
-        END
-    WHERE id = project_id_val;
+        delivery_risk = risk_level
+    WHERE id = target_project_id 
+    AND (projects.health_score != health_score 
+         OR projects.health_status != health_status_val 
+         OR projects.delivery_risk != risk_level);
 
     RETURN COALESCE(NEW, OLD);
 END;
@@ -551,18 +578,15 @@ CREATE TRIGGER update_financial_overview_updated_at
 CREATE TRIGGER update_company_kpis_updated_at 
     BEFORE UPDATE ON company_kpis FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Business logic triggers
+-- Business logic triggers (removed recursive project health trigger)
 CREATE TRIGGER update_resource_status_on_project_change
     AFTER INSERT OR UPDATE OR DELETE ON project_resources 
     FOR EACH ROW EXECUTE FUNCTION update_resource_status();
 
-CREATE TRIGGER calculate_project_health_on_project_change
-    AFTER INSERT OR UPDATE ON projects 
-    FOR EACH ROW EXECUTE FUNCTION calculate_project_health();
-
-CREATE TRIGGER calculate_project_health_on_deliverable_change
+-- Only trigger health calculation on deliverable changes to avoid recursion
+CREATE TRIGGER update_project_health_on_deliverable_change
     AFTER INSERT OR UPDATE OR DELETE ON deliverables 
-    FOR EACH ROW EXECUTE FUNCTION calculate_project_health();
+    FOR EACH ROW EXECUTE FUNCTION update_project_health();
 
 -- =============================================================================
 -- DASHBOARD VIEWS
