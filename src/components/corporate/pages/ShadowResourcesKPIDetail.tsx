@@ -10,6 +10,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ShadowResourcesExportModal } from "../modals/ShadowResourcesExportModal";
+import { UpdateShadowProgressModal } from "../modals/UpdateShadowProgressModal";
 
 const shadowData = [
   { name: 'Learning Phase', count: 12, color: '#22356F' },
@@ -17,7 +18,7 @@ const shadowData = [
   { name: 'Observation', count: 2, color: '#37474F' }
 ];
 
-const shadowResources = [
+const initialShadowResources = [
   { id: 1, name: 'Emma Wilson', role: 'Junior Developer', mentor: 'John Smith', status: 'Learning', startDate: '2024-01-15', progress: 75 },
   { id: 2, name: 'Daniel Brown', role: 'QA Trainee', mentor: 'Mike Chen', status: 'Transition', startDate: '2024-02-01', progress: 60 },
   { id: 3, name: 'Sophie Davis', role: 'UI Designer', mentor: 'Sarah Johnson', status: 'Learning', startDate: '2024-01-20', progress: 85 },
@@ -30,6 +31,9 @@ export const ShadowResourcesKPIDetail = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPhase, setSelectedPhase] = useState("all");
   const [showExportModal, setShowExportModal] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const [selectedResource, setSelectedResource] = useState<any>(null);
+  const [shadowResources, setShadowResources] = useState(initialShadowResources);
 
   const phases = [...new Set(shadowResources.map(resource => resource.status))];
 
@@ -49,9 +53,18 @@ export const ShadowResourcesKPIDetail = () => {
     navigate(`/resource-detail/${resourceId}`);
   };
 
-  const handleUpdateProgress = (resourceId: number) => {
-    console.log('Opening progress update for resource:', resourceId);
-    alert(`Update progress for resource ID: ${resourceId}. This functionality will open a progress update modal.`);
+  const handleUpdateProgress = (resource: any) => {
+    console.log('Opening progress update for resource:', resource.id);
+    setSelectedResource(resource);
+    setShowProgressModal(true);
+  };
+
+  const handleProgressUpdate = (resourceId: number, progress: number, status: string) => {
+    setShadowResources(prev => prev.map(resource => 
+      resource.id === resourceId 
+        ? { ...resource, progress, status }
+        : resource
+    ));
   };
 
   const handleExportClick = () => {
@@ -263,7 +276,7 @@ export const ShadowResourcesKPIDetail = () => {
                             variant="outline" 
                             size="sm" 
                             className="border-teal text-teal hover:bg-teal/5"
-                            onClick={() => handleUpdateProgress(resource.id)}
+                            onClick={() => handleUpdateProgress(resource)}
                           >
                             Update Progress
                           </Button>
@@ -285,6 +298,13 @@ export const ShadowResourcesKPIDetail = () => {
             avgProgress,
             selectedPhase: selectedPhase !== "all" ? selectedPhase : undefined
           }}
+        />
+
+        <UpdateShadowProgressModal
+          isOpen={showProgressModal}
+          onClose={() => setShowProgressModal(false)}
+          resource={selectedResource}
+          onUpdate={handleProgressUpdate}
         />
       </div>
     </div>
