@@ -74,10 +74,6 @@ export const LoginForm = () => {
               Sign In
             </Button>
           </form>
-          <div className="mt-6 text-center text-sm text-slate">
-            <p>Demo credentials:</p>
-            <p className="text-deep-blue font-medium">admin / password</p>
-          </div>
         </CardContent>
       </Card>
     </div>
