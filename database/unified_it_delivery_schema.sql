@@ -472,14 +472,14 @@ BEGIN
     END INTO budget_health
     FROM projects WHERE id = project_id_val;
 
-    -- Calculate timeline health
+    -- Calculate timeline health using proper PostgreSQL date arithmetic
     SELECT CASE 
         WHEN end_date IS NOT NULL THEN
             CASE 
                 WHEN CURRENT_DATE > end_date THEN 0
                 WHEN CURRENT_DATE > start_date THEN
-                    GREATEST(0, 100 - (EXTRACT(DAYS FROM CURRENT_DATE - start_date)::INTEGER * 100 / 
-                    GREATEST(1, EXTRACT(DAYS FROM end_date - start_date)::INTEGER) - 50) * 2)
+                    GREATEST(0, 100 - ((CURRENT_DATE - start_date) * 100 / 
+                    GREATEST(1, end_date - start_date) - 50) * 2)
                 ELSE 100
             END
         ELSE 100
