@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Index } from '../pages/Index';
-import { NotFound } from '../pages/NotFound';
+import Index from '../pages/Index';
+import NotFound from '../pages/NotFound';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { CorporateLayout } from '../components/corporate/CorporateLayout';
 import { EnterpriseLayout } from '../components/enterprise/EnterpriseLayout';
