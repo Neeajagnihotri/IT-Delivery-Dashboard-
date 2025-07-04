@@ -1,5 +1,4 @@
 
-
 -- =============================================================================
 -- IT DELIVERY DASHBOARD - COMPREHENSIVE DATABASE SCHEMA
 -- =============================================================================
@@ -757,4 +756,3 @@ INSERT INTO company_kpis (revenue, profit_margin, employee_utilization, client_s
 (625000.00, 25.5, 78.2, 4.3, 94.2, 87.5, 4.1, 82.0, 12.5, 89.3);
 
 COMMENT ON DATABASE CURRENT_DATABASE() IS 'IT Delivery Dashboard - Complete database schema with all required tables and relationships';
-
