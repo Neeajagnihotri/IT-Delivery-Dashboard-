@@ -92,6 +92,7 @@ const App = () => (
                   <Route path="deliverables" element={<DeliverablesDetail />} />
                   <Route path="project/:projectName" element={<ProjectDetailView />} />
                   <Route path="project-detail/:projectId" element={<ProjectDetailView />} />
+                  <Route path="project-detail-view/:projectId" element={<ProjectDetailView />} />
                   <Route path="resource-kpi/total" element={<TotalResourcesDetail />} />
                   <Route path="resource-kpi/:kpiType" element={<ResourceKPIDetailPage />} />
                   <Route path="project-resources/:projectName" element={<ProjectResourceDetailPage />} />
